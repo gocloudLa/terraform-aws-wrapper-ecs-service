@@ -14,9 +14,9 @@ module "wrapper_ecs_service" {
 
   ecs_service_parameters = {
     ExSimple = {
-      # ecs_cluster_name                       = "dmc-prd-core-00"  # (Opcional) Auto Descubrimiento
-      # vpc_name                               = "dmc-prd"          # (Opcional) Auto Descubrimiento
-      # subnet_name                            = "dmc-prd-private*" # (Opcional) Auto Descubrimiento
+      # ecs_cluster_name                       = "dmc-prd-core-00"  # (Optional) Auto Discovery
+      # vpc_name                               = "dmc-prd"          # (Optional) Auto Discovery
+      # subnet_name                            = "dmc-prd-private*" # (Optional) Auto Discovery
 
       enable_autoscaling     = false
       enable_execute_command = true
@@ -31,7 +31,7 @@ module "wrapper_ecs_service" {
         }
       }
 
-      # Policies que usan la tasks desde el codigo desarrollado
+      # Policies used by tasks from the developed code
       tasks_iam_role_policies = {
         ReadOnlyAccess = "arn:aws:iam::aws:policy/ReadOnlyAccess"
       }
@@ -41,7 +41,7 @@ module "wrapper_ecs_service" {
           resources = ["arn:aws:s3:::*"]
         }
       ]
-      # Policies que usa el servicio para poder iniciar tasks (ecr / ssm / etc)
+      # Policies used by the service to start tasks (ecr / ssm / etc)
       task_exec_iam_role_policies = {}
       task_exec_iam_statements    = []
 
@@ -101,10 +101,10 @@ module "wrapper_ecs_service" {
 
       enable_execute_command = true
 
-      # Policies que usan la tasks desde el codigo desarrollado
+      # Policies used by tasks from the developed code
       tasks_iam_role_policies   = {}
       tasks_iam_role_statements = []
-      # Policies que usa el servicio para poder iniciar tasks (ecr / ssm / etc)
+      # Policies used by the service to start tasks (ecr / ssm / etc)
       task_exec_iam_role_policies = {}
       task_exec_iam_statements    = []
 
@@ -156,10 +156,10 @@ module "wrapper_ecs_service" {
 
       enable_execute_command = true
 
-      # Policies que usan la tasks desde el codigo desarrollado
+      # Policies used by tasks from the developed code
       tasks_iam_role_policies   = {}
       tasks_iam_role_statements = []
-      # Policies que usa el servicio para poder iniciar tasks (ecr / ssm / etc)
+      # Policies used by the service to start tasks (ecr / ssm / etc)
       task_exec_iam_role_policies = {}
       task_exec_iam_statements    = []
 
@@ -207,10 +207,10 @@ module "wrapper_ecs_service" {
       schedule_expression       = "cron(0/5 * * * ? *)" # Run every 5 minutes
       create_ecs_lambda_trigger = true
 
-      # Policies que usan la tasks desde el codigo desarrollado
+      # Policies used by tasks from the developed code
       tasks_iam_role_policies   = {}
       tasks_iam_role_statements = []
-      # Policies que usa el servicio para poder iniciar tasks (ecr / ssm / etc)
+      # Policies used by the service to start tasks (ecr / ssm / etc)
       task_exec_iam_role_policies = {}
       task_exec_iam_statements    = []
 
@@ -231,10 +231,10 @@ module "wrapper_ecs_service" {
 
       enable_execute_command = true
 
-      # Policies que usan la tasks desde el codigo desarrollado
+      # Policies used by tasks from the developed code
       tasks_iam_role_policies   = {}
       tasks_iam_role_statements = []
-      # Policies que usa el servicio para poder iniciar tasks (ecr / ssm / etc)
+      # Policies used by the service to start tasks (ecr / ssm / etc)
       task_exec_iam_role_policies = {}
       task_exec_iam_statements    = []
 
@@ -252,7 +252,7 @@ module "wrapper_ecs_service" {
 
 
       # https://dmc-prd-core-external-00.democorp.cloud/filebrowser/files/
-      # admin / admin
+      # admin / admin (default credentials)
       containers = {
         app = {
           image                 = "hurlenko/filebrowser:latest"
@@ -308,10 +308,10 @@ module "wrapper_ecs_service" {
 
       enable_execute_command = true
 
-      # Policies que usan la tasks desde el codigo desarrollado
+      # Policies used by tasks from the developed code
       tasks_iam_role_policies   = {}
       tasks_iam_role_statements = []
-      # Policies que usa el servicio para poder iniciar tasks (ecr / ssm / etc)
+      # Policies used by the service to start tasks (ecr / ssm / etc)
       task_exec_iam_role_policies = {}
       task_exec_iam_statements    = []
 
@@ -406,10 +406,10 @@ module "wrapper_ecs_service" {
       # subnet_name                            = "dmc-prd-private*"
       enable_autoscaling = false
 
-      # Policies que usan la tasks desde el codigo desarrollado
+      # Policies used by tasks from the developed code
       tasks_iam_role_policies   = {}
       tasks_iam_role_statements = []
-      # Policies que usa el servicio para poder iniciar tasks (ecr / ssm / etc)
+      # Policies used by the service to start tasks (ecr / ssm / etc)
       task_exec_iam_role_policies = {}
       task_exec_iam_statements    = []
 
@@ -445,7 +445,7 @@ module "wrapper_ecs_service" {
                   }
                 }
                 "alb2" = {
-                  alb_name          = "dmc-prd-core-external-00" # Puede otro ALB / Internal por ejemplo
+                  alb_name          = "dmc-prd-core-external-00" # Can be another ALB / Internal for example
                   alb_listener_port = 443
                   dns_records = {
                     "AlbMulti2" = {
@@ -479,10 +479,10 @@ module "wrapper_ecs_service" {
       # subnet_name                            = "dmc-prd-private*"
       enable_autoscaling = false
 
-      # Policies que usan la tasks desde el codigo desarrollado
+      # Policies used by tasks from the developed code
       tasks_iam_role_policies   = {}
       tasks_iam_role_statements = []
-      # Policies que usa el servicio para poder iniciar tasks (ecr / ssm / etc)
+      # Policies used by the service to start tasks (ecr / ssm / etc)
       task_exec_iam_role_policies = {}
       task_exec_iam_statements    = []
 
@@ -535,10 +535,10 @@ module "wrapper_ecs_service" {
 
       enable_execute_command = true
 
-      # Policies que usan la tasks desde el codigo desarrollado
+      # Policies used by tasks from the developed code
       tasks_iam_role_policies   = {}
       tasks_iam_role_statements = []
-      # Policies que usa el servicio para poder iniciar tasks (ecr / ssm / etc)
+      # Policies used by the service to start tasks (ecr / ssm / etc)
       task_exec_iam_role_policies = {}
       task_exec_iam_statements    = []
 
@@ -569,10 +569,10 @@ module "wrapper_ecs_service" {
 
       enable_execute_command = true
 
-      # Policies que usan la tasks desde el codigo desarrollado
+      # Policies used by tasks from the developed code
       tasks_iam_role_policies   = {}
       tasks_iam_role_statements = []
-      # Policies que usa el servicio para poder iniciar tasks (ecr / ssm / etc)
+      # Policies used by the service to start tasks (ecr / ssm / etc)
       task_exec_iam_role_policies = {}
       task_exec_iam_statements    = []
 
@@ -589,7 +589,7 @@ module "wrapper_ecs_service" {
           ports = {
             "port1" = {
               container_port = 80
-              # SOLO SE ADMITE UNO POR SERVICE
+              # ONLY ONE ALLOWED PER SERVICE
               service_discovery = {
                 # record_name    = "" # Default: service_name
                 namespace_name = "project1.internal"
@@ -601,9 +601,9 @@ module "wrapper_ecs_service" {
     }
 
     ExAlarms = {
-      # ecs_cluster_name                       = "dmc-prd-core-00"  # (Opcional) Auto Descubrimiento
-      # vpc_name                               = "dmc-prd"          # (Opcional) Auto Descubrimiento
-      # subnet_name                            = "dmc-prd-private*" # (Opcional) Auto Descubrimiento
+      # ecs_cluster_name                       = "dmc-prd-core-00"  # (Optional) Auto Discovery
+      # vpc_name                               = "dmc-prd"          # (Optional) Auto Discovery
+      # subnet_name                            = "dmc-prd-private*" # (Optional) Auto Discovery
 
       enable_autoscaling     = false
       enable_execute_command = true
@@ -705,7 +705,7 @@ module "wrapper_ecs_service" {
         }
       }
 
-      # Policies que usan la tasks desde el codigo desarrollado
+      # Policies used by tasks from the developed code
       tasks_iam_role_policies = {
         ReadOnlyAccess = "arn:aws:iam::aws:policy/ReadOnlyAccess"
       }
@@ -715,7 +715,7 @@ module "wrapper_ecs_service" {
           resources = ["arn:aws:s3:::*"]
         }
       ]
-      # Policies que usa el servicio para poder iniciar tasks (ecr / ssm / etc)
+      # Policies used by the service to start tasks (ecr / ssm / etc)
       task_exec_iam_role_policies = {}
       task_exec_iam_statements    = []
 
