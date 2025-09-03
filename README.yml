@@ -787,8 +787,6 @@ features:
           ```
 important_notes: ""
 input_table: |
-  | Name | Description | Type | Default | Required |
-  |------|-------------|------|---------|:--------:|
   | name | ECS service instance name. | `string` | `"${local.common_name}-${each.key}"` | no |
   | alarms | Alarms associated with the ECS service (e.g., CloudWatch). | `map` | `{}` | no |
   | assign_public_ip | Indicates whether a public IP should be assigned to the ECS task. | `bool` | `false` | no |
