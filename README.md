@@ -6,7 +6,10 @@ Each module encapsulates best practices, security configurations, and sensible d
 
 ## 📦 Module: Terraform ECS Service Module
 <p align="right"><a href="https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/releases/latest"><img src="https://img.shields.io/github/v/release/gocloudLa/terraform-aws-wrapper-ecs-service.svg?style=for-the-badge" alt="Latest Release"/></a><a href=""><img src="https://img.shields.io/github/last-commit/gocloudLa/terraform-aws-wrapper-ecs-service.svg?style=for-the-badge" alt="Last Commit"/></a><a href="https://registry.terraform.io/modules/gocloudLa/wrapper-ecs-service/aws"><img src="https://img.shields.io/badge/Terraform-Registry-7B42BC?style=for-the-badge&logo=terraform&logoColor=white" alt="Terraform Registry"/></a></p>
-The Terraform Wrapper for ECS SERVICE is a comprehensive solution module for deploying containerized applications in the Amazon Elastic Container Service.
+The Terraform Wrapper for ECS SERVICE is a comprehensive, production-ready solution module for deploying and managing containerized applications in Amazon Elastic Container Service (ECS).
+
+This module provides enterprise-grade features including automated load balancer integration, service discovery, persistent storage with EFS, comprehensive monitoring and alerting, scheduled task execution, and seamless DNS management. Built with security best practices and operational excellence in mind, it simplifies complex ECS deployments while maintaining flexibility and scalability.
+
 
 ### ✨ Features
 
@@ -33,9 +36,9 @@ The Terraform Wrapper for ECS SERVICE is a comprehensive solution module for dep
 ### 🔗 External Modules
 | Name | Version |
 |------|------:|
-| [terraform-aws-modules/ecr/aws](https://github.com/terraform-aws-modules/ecr-aws) | 2.4.0 |
-| [terraform-aws-modules/lambda/aws](https://github.com/terraform-aws-modules/lambda-aws) | 8.0.1 |
-| [terraform-aws-modules/ssm-parameter/aws](https://github.com/terraform-aws-modules/ssm-parameter-aws) | 1.1.2 |
+| <a href="https://github.com/terraform-aws-modules/terraform-aws-ecr" target="_blank">terraform-aws-modules/ecr/aws</a> | 2.4.0 |
+| <a href="https://github.com/terraform-aws-modules/terraform-aws-lambda" target="_blank">terraform-aws-modules/lambda/aws</a> | 8.0.1 |
+| <a href="https://github.com/terraform-aws-modules/terraform-aws-ssm-parameter" target="_blank">terraform-aws-modules/ssm-parameter/aws</a> | 1.1.2 |
 
 
 
@@ -43,14 +46,14 @@ The Terraform Wrapper for ECS SERVICE is a comprehensive solution module for dep
 ```hcl
 ecs_service_parameters = {
   ExSimple = {
-    # ecs_cluster_name                       = "dmc-prd-core-00"  # (Opcional) Auto Descubrimiento
-    # vpc_name                               = "dmc-prd"          # (Opcional) Auto Descubrimiento
-    # subnet_name                            = "dmc-prd-private*" # (Opcional) Auto Descubrimiento
+    # ecs_cluster_name                       = "dmc-prd-core-00"  # (Optional) Auto Discovery
+    # vpc_name                               = "dmc-prd"          # (Optional) Auto Discovery
+    # subnet_name                            = "dmc-prd-private*" # (Optional) Auto Discovery
 
     enable_autoscaling = false
     enable_execute_command = true   
 
-    # Policies que usan la tasks desde el codigo desarrollado
+    # Policies used by tasks from the developed code
     tasks_iam_role_policies = {
       ReadOnlyAccess = "arn:aws:iam::aws:policy/ReadOnlyAccess"
     }
@@ -60,7 +63,7 @@ ecs_service_parameters = {
         resources = ["arn:aws:s3:::*"]
       }
     ]
-    # Policies que usa el servicio para poder iniciar tasks (ecr / ssm / etc)
+    # Policies used by the service to start tasks (ecr / ssm / etc)
     task_exec_iam_role_policies = {}
     task_exec_iam_statements    = []
 
@@ -131,10 +134,10 @@ ecs_service_parameters = {
 
     enable_execute_command = true
 
-    # Policies que usan la tasks desde el codigo desarrollado
+    # Policies used by tasks from the developed code
     tasks_iam_role_policies   = {}
     tasks_iam_role_statements = []
-    # Policies que usa el servicio para poder iniciar tasks (ecr / ssm / etc)
+    # Policies used by the service to start tasks (ecr / ssm / etc)
     task_exec_iam_role_policies = {}
     task_exec_iam_statements    = []
 
@@ -202,10 +205,10 @@ ecs_service_parameters = {
 
     enable_execute_command = true
 
-    # Policies que usan la tasks desde el codigo desarrollado
+    # Policies used by tasks from the developed code
     tasks_iam_role_policies   = {}
     tasks_iam_role_statements = []
-    # Policies que usa el servicio para poder iniciar tasks (ecr / ssm / etc)
+    # Policies used by the service to start tasks (ecr / ssm / etc)
     task_exec_iam_role_policies = {}
     task_exec_iam_statements    = []
 
@@ -316,10 +319,10 @@ ecs_service_parameters = {
 
     enable_execute_command = true
 
-    # Policies que usan la tasks desde el codigo desarrollado
+    # Policies used by tasks from the developed code
     tasks_iam_role_policies   = {}
     tasks_iam_role_statements = []
-    # Policies que usa el servicio para poder iniciar tasks (ecr / ssm / etc)
+    # Policies used by the service to start tasks (ecr / ssm / etc)
     task_exec_iam_role_policies = {}
     task_exec_iam_statements    = []
 
@@ -356,7 +359,7 @@ ecs_service_parameters = {
                 }
               }
               "alb2" = {
-                alb_name          = "dmc-prd-core-external-00" # Puede otro ALB / Internal por ejemplo
+                alb_name          = "dmc-prd-core-external-00" # Can be another ALB / Internal for example
                 alb_listener_port = 443
                 dns_records = {
                   "AlbMulti2" = {
@@ -391,7 +394,9 @@ ecs_service_parameters = {
 
 
 ### Integration with Service Discovery
-Supports integration with CloudMap / Service Discovery, automates integration.
+Enables seamless integration with AWS CloudMap (Service Discovery) for service-to-service communication within your VPC.<br/>
+Automatically registers ECS services with CloudMap namespaces, allowing services to discover and communicate with each other using DNS names.<br/>
+**Note**: Only one service discovery configuration is allowed per ECS service.
 
 
 <details><summary>Configuration Code</summary>
@@ -406,10 +411,10 @@ ecs_service_parameters = {
 
     enable_execute_command = true
 
-    # Policies que usan la tasks desde el codigo desarrollado
+    # Policies used by tasks from the developed code
     tasks_iam_role_policies   = {}
     tasks_iam_role_statements = []
-    # Policies que usa el servicio para poder iniciar tasks (ecr / ssm / etc)
+    # Policies used by the service to start tasks (ecr / ssm / etc)
     task_exec_iam_role_policies = {}
     task_exec_iam_statements    = []
 
@@ -426,7 +431,7 @@ ecs_service_parameters = {
         ports = {
           "port1" = {
             container_port = 80
-            # SOLO SE ADMITE UNO POR SERVICE
+            # ONLY ONE ALLOWED PER SERVICE
             service_discovery = {
               # record_name    = "" # Default: service_name
               namespace_name = "project1.internal"
@@ -455,10 +460,10 @@ ecs_service_parameters = {
   ExDns = {
     enable_autoscaling                 = false
 
-    # Policies que usan la tasks desde el codigo desarrollado
+    # Policies used by tasks from the developed code
     tasks_iam_role_policies   = {}
     tasks_iam_role_statements = []
-    # Policies que usa el servicio para poder iniciar tasks (ecr / ssm / etc)
+    # Policies used by the service to start tasks (ecr / ssm / etc)
     task_exec_iam_role_policies = {}
     task_exec_iam_statements    = []
 
@@ -508,7 +513,9 @@ ecs_service_parameters = {
 
 
 ### Integration with EFS
-Subscribe to the containers to mount an EFS (Elastic File System / NFS) volume previously generated at the project level or externally (manually generated).
+Enables containers to mount EFS (Elastic File System / NFS) volumes for persistent, shared storage across multiple services and tasks.<br/>
+Supports mounting previously created EFS volumes at the project level or externally managed volumes.<br/>
+Provides flexible configuration for read-only and read-write access points, enabling data sharing and persistence across container restarts.
 
 
 <details><summary>Configuration Code</summary>
@@ -523,10 +530,10 @@ ecs_service_parameters = {
 
     enable_execute_command = true
 
-    # Policies que usan la tasks desde el codigo desarrollado
+    # Policies used by tasks from the developed code
     tasks_iam_role_policies   = {}
     tasks_iam_role_statements = []
-    # Policies que usa el servicio para poder iniciar tasks (ecr / ssm / etc)
+    # Policies used by the service to start tasks (ecr / ssm / etc)
     task_exec_iam_role_policies = {}
     task_exec_iam_statements    = []
 
@@ -544,7 +551,7 @@ ecs_service_parameters = {
 
 
     # https://dmc-prd-core-external-00.democorp.cloud/filebrowser/files/
-    # admin / admin
+    # admin / admin (default credentials)
     containers = {
       app = {
         image                 = "hurlenko/filebrowser:latest"
@@ -599,7 +606,9 @@ ecs_service_parameters = {
 
 
 ### Scheduled Task Support
-A task is configured that, instead of running as a service, runs based on a schedule (scheduler / cron).
+Configures ECS tasks to run on a scheduled basis using cron expressions instead of running as continuous services.<br/>
+Supports integration with AWS Lambda triggers for enhanced scheduling capabilities and monitoring.<br/>
+Perfect for batch jobs, data processing tasks, maintenance operations, and other time-based workloads.
 
 
 <details><summary>Configuration Code</summary>
@@ -612,10 +621,10 @@ ecs_service_parameters = {
     schedule_expression       = "cron(0/5 * * * ? *)" # Run every 5 minutes
     create_ecs_lambda_trigger = true
 
-    # Policies que usan la tasks desde el codigo desarrollado
+    # Policies used by tasks from the developed code
     tasks_iam_role_policies   = {}
     tasks_iam_role_statements = []
-    # Policies que usa el servicio para poder iniciar tasks (ecr / ssm / etc)
+    # Policies used by the service to start tasks (ecr / ssm / etc)
     task_exec_iam_role_policies = {}
     task_exec_iam_statements    = []
 
@@ -635,11 +644,16 @@ ecs_service_parameters = {
 
 
 ### Logs Notification
-The module generates a subscription filter on the log_group of the services and sends the events that meet the search pattern to the notification lambda function generated from the foundation level by **wrapper_notifications**.<br/><br/>
-Currently, it only searches in a Json log format and notifies if the severity of the event is different from "INFO" or "DEBUG". In the future, this will be configurable<br/>
-```
-Current Filter: "{ $.level != \"INFO\" && $.level != \"DEBUG\" }"
+Automatically creates CloudWatch Logs subscription filters for ECS service log groups to monitor and alert on critical events.<br/>
+Integrates with the **wrapper_notifications** Lambda function from the foundation level to send notifications when log events match specific patterns.<br/><br/>
+**Current Capabilities:**
+- Monitors JSON-formatted logs for severity levels other than "INFO" or "DEBUG"
+- Sends real-time notifications for ERROR, WARN, FATAL, and other critical log levels
+- Configurable filter patterns (future enhancement)
 
+**Current Filter Pattern:**
+```
+"{ $.level != \"INFO\" && $.level != \"DEBUG\" }"
 ```
 
 
@@ -667,7 +681,21 @@ ecs_service_parameters = {
 
 
 ### Alarm Notification
-The module allows the creation of alarms for CPU and Memory usage via cloudwatch and the creation of alarms by EventBridge to capture restarts of an ECS task. Both subscribe to an SNS for notification and also support changing any alarm value, disabling it, or creating a custom alarm.
+Comprehensive monitoring and alerting system for ECS services using CloudWatch and EventBridge integrations.<br/><br/>
+**CloudWatch Alarms:**
+- CPU and Memory utilization monitoring with configurable thresholds
+- Support for custom alarm configurations and overrides
+- Ability to disable specific alarms or create custom metrics
+
+**EventBridge Integration:**
+- Automatic detection of ECS task restarts and failures
+- Configurable event patterns for different failure scenarios
+- Real-time notifications for task state changes
+
+**Notification Features:**
+- SNS integration for multi-channel notifications (email, SMS, Slack, etc.)
+- Customizable alarm tags for organization and routing
+- Support for both warning and critical alert levels
 
 
 <details><summary>Configuration Code</summary>
@@ -675,9 +703,9 @@ The module allows the creation of alarms for CPU and Memory usage via cloudwatch
 ```hcl
 ecs_service_parameters = {
     ExAlarms = {
-      # ecs_cluster_name                       = "dmc-prd-core-00"  # (Opcional) Auto Descubrimiento
-      # vpc_name                               = "dmc-prd"          # (Opcional) Auto Descubrimiento
-      # subnet_name                            = "dmc-prd-private*" # (Opcional) Auto Descubrimiento
+      # ecs_cluster_name                       = "dmc-prd-core-00"  # (Optional) Auto Discovery
+      # vpc_name                               = "dmc-prd"          # (Optional) Auto Discovery
+      # subnet_name                            = "dmc-prd-private*" # (Optional) Auto Discovery
 
       enable_autoscaling     = false
       enable_execute_command = true
@@ -762,7 +790,7 @@ ecs_service_parameters = {
         # }
       }
 
-      # Policies que usan la tasks desde el codigo desarrollado
+      # Policies used by tasks from the developed code
       tasks_iam_role_policies = {
         ReadOnlyAccess = "arn:aws:iam::aws:policy/ReadOnlyAccess"
       }
@@ -772,7 +800,7 @@ ecs_service_parameters = {
           resources = ["arn:aws:s3:::*"]
         }
       ]
-      # Policies que usa el servicio para poder iniciar tasks (ecr / ssm / etc)
+      # Policies used by the service to start tasks (ecr / ssm / etc)
       task_exec_iam_role_policies = {}
       task_exec_iam_statements    = []
 
@@ -819,118 +847,119 @@ ecs_service_parameters = {
 
 
 ## 📑 Inputs
-| Name                                         | Description                                                                                                                                                       | Type     | Default                                                                                                              | Required |
-| -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | -------------------------------------------------------------------------------------------------------------------- | -------- |
-| name                                         | ECS service instance name.                                                                                                                                        | `string` | `"${local.common_name}-${each.key}"`                                                                                 | no       |
-| alarms                                       | Alarms associated with the ECS service (e.g., CloudWatch).                                                                                                        | `map`    | `{}`                                                                                                                 | no       |
-| assign_public_ip                             | Indicates whether a public IP should be assigned to the ECS task.                                                                                                 | `bool`   | `false`                                                                                                              | no       |
-| autoscaling_max_capacity                     | Maximum auto-scaling capacity for the ECS service.                                                                                                                | `number` | `10`                                                                                                                 | no       |
-| autoscaling_min_capacity                     | Minimum auto-scaling capacity for the ECS service.                                                                                                                | `number` | `1`                                                                                                                  | no       |
-| autoscaling_policies                         | Auto-scaling policies defined for CPU and memory.                                                                                                                 | `map`    | `Configuración predeterminada para CPU y memoria.`                                                                   | no       |
-| autoscaling_scheduled_actions                | Actions scheduled for auto-scaling.                                                                                                                               | `map`    | `{}`                                                                                                                 | no       |
-| availability_zone_rebalancing                | Automatically redistributes tasks within a service between AZs.                                                                                                   | `string` | `"DISABLED"`                                                                                                         | no       |
-| cluster_arn                                  | ARN of the ECS cluster to which the service belongs.                                                                                                              | `string` | `data.aws_ecs_cluster.this[each.key].id`                                                                             | no       |
-| container_definitions                        | Container definitions for the ECS service.                                                                                                                        | `list`   | `local.container_definitions[each.key]`                                                                              | no       |
-| cpu                                          | CPU units for the ECS service.                                                                                                                                    | `number` | `1024`                                                                                                               | no       |
-| create                                       | Indicates whether the ECS service should be created.                                                                                                              | `bool`   | `true`                                                                                                               | no       |
-| create_iam_role                              | Indicates whether an IAM role should be created for the service.                                                                                                  | `bool`   | `true`                                                                                                               | no       |
-| create_infrastructure_iam_role               | Indicates whether an IAM role should be created for the infrastructure.                                                                                           | `bool`   | `false`                                                                                                              | no       |
-| create_security_group                        | Indicates whether a security group should be created.                                                                                                             | `bool`   | `true`                                                                                                               | no       |
-| create_service                               | Indicates whether the ECS service should be created.                                                                                                              | `bool`   | `false`                                                                                                              | no       |
-| create_task_definition                       | Indicates whether the task definition for the service should be created.                                                                                          | `bool`   | `true`                                                                                                               | no       |
-| create_task_exec_iam_role                    | Indicates whether an IAM role should be created for task execution.                                                                                               | `bool`   | `true`                                                                                                               | no       |
-| create_task_exec_policy                      | Indicates whether a policy should be created for task execution.                                                                                                  | `bool`   | `true`                                                                                                               | no       |
-| create_tasks_iam_role                        | Indicates whether an IAM role should be created for tasks.                                                                                                        | `bool`   | `true`                                                                                                               | no       |
-| deployment_circuit_breaker                   | Circuit breaker configuration for deployments.                                                                                                                    | `map`    | `{}`                                                                                                                 | no       |
-| deployment_controller                        | Deployment controller for the ECS service.                                                                                                                        | `map`    | `{}`                                                                                                                 | no       |
-| deployment_maximum_percent                   | Maximum percentage of deployment during the update.                                                                                                               | `number` | `200`                                                                                                                | no       |
-| deployment_minimum_healthy_percent           | Minimum percentage of healthy instances during deployment.                                                                                                        | `number` | `66`                                                                                                                 | no       |
-| desired_count                                | Desired number of running instances of the service.                                                                                                               | `number` | `1 (o 0 si `ecs_execution_type` es "schedule")`                                                                      | no       |
-| enable_autoscaling                           | Indicates whether auto-scaling should be enabled.                                                                                                                 | `bool`   | `true (o false si `ecs_execution_type` es "schedule")`                                                               | no       |
-| enable_ecs_managed_tags                      | Indicates whether ECS-managed tags should be enabled.                                                                                                             | `bool`   | `true`                                                                                                               | no       |
-| enable_execute_command                       | Indicates whether the execute command should be enabled on the ECS service.                                                                                       | `bool`   | `true`                                                                                                               | no       |
-| enable_fault_injection                       | Allows for fault injection and allows fault injection requests to be accepted from task containers.                                                               | `bool`   | `false`                                                                                                              | no       |
-| ephemeral_storage                            | Ephemeral storage configuration for the ECS service.                                                                                                              | `map`    | `{}`                                                                                                                 | no       |
-| external_id                                  | External ID for the ECS service.                                                                                                                                  | `string` | `null`                                                                                                               | no       |
-| family                                       | Family of the ECS task definition.                                                                                                                                | `string` | `null`                                                                                                               | no       |
-| force_delete                                 | Indicates whether to force the deletion of the ECS service.                                                                                                       | `bool`   | `null`                                                                                                               | no       |
-| force_new_deployment                         | Indicates whether to force a new deployment of the ECS service.                                                                                                   | `bool`   | `true`                                                                                                               | no       |
-| health_check_grace_period_seconds            | Grace period for service health check.                                                                                                                            | `number` | `null`                                                                                                               | no       |
-| iam_role_arn                                 | ARN of the IAM role associated with the ECS service.                                                                                                              | `string` | `null`                                                                                                               | no       |
-| iam_role_description                         | Description of the IAM role associated with the ECS service.                                                                                                      | `string` | `null`                                                                                                               | no       |
-| iam_role_name                                | Name of the IAM role associated with the ECS service.                                                                                                             | `string` | `null`                                                                                                               | no       |
-| iam_role_path                                | Path of the IAM role associated with the ECS service.                                                                                                             | `string` | `null`                                                                                                               | no       |
-| iam_role_permissions_boundary                | Permissions boundary of the IAM role associated with the ECS service.                                                                                             | `string` | `null`                                                                                                               | no       |
-| iam_role_statements                          | Permission statements of the IAM role.                                                                                                                            | `list`   | `[]`                                                                                                                 | no       |
-| iam_role_tags                                | Tags of the IAM role.                                                                                                                                             | `map`    | `{}`                                                                                                                 | no       |
-| iam_role_use_name_prefix                     | Indicates whether a prefix should be used for the IAM role name.                                                                                                  | `bool`   | `true`                                                                                                               | no       |
-| ignore_task_definition_changes               | Indicates whether to ignore changes in the task definition.                                                                                                       | `bool`   | `false`                                                                                                              | no       |
-| infrastructure_iam_role_arn                  | ARN of the IAM role for the infrastructure.                                                                                                                       | `string` | `null`                                                                                                               | no       |
-| infrastructure_iam_role_name                 | Name of the IAM role for the infrastructure.                                                                                                                      | `string` | `null`                                                                                                               | no       |
-| infrastructure_iam_role_use_name_prefix      | Indicates whether a prefix should be used for the IAM role name.                                                                                                  | `bool`   | `false`                                                                                                              | no       |
-| infrastructure_iam_role_path                 | Path of the IAM role for the infrastructure.                                                                                                                      | `string` | `null`                                                                                                               | no       |
-| infrastructure_iam_role_description          | Description of the IAM role for the infrastructure.                                                                                                               | `string` | `null`                                                                                                               | no       |
-| infrastructure_iam_role_permissions_boundary | Permissions boundary of the IAM role for the infrastructure.                                                                                                      | `string` | `null`                                                                                                               | no       |
-| infrastructure_iam_role_tags                 | IAM role tags for the infrastructure.                                                                                                                             | `map`    | `null`                                                                                                               | no       |
-| ipc_mode                                     | IPC mode for the container.                                                                                                                                       | `string` | `null`                                                                                                               | no       |
-| launch_type                                  | Launch type of the ECS service.                                                                                                                                   | `string` | `"FARGATE"`                                                                                                          | no       |
-| load_balancer                                | Load balancer configuration.                                                                                                                                      | `map`    | `local.load_balancer_calculated[each.key]`                                                                           | no       |
-| memory                                       | Memory assigned to the ECS service container.                                                                                                                     | `number` | `2048`                                                                                                               | no       |
-| network_mode                                 | Network mode of the container.                                                                                                                                    | `string` | `"awsvpc"`                                                                                                           | no       |
-| ordered_placement_strategy                   | Ordered placement strategy for instances.                                                                                                                         | `map`    | `{}`                                                                                                                 | no       |
-| pid_mode                                     | PID mode for the container.                                                                                                                                       | `string` | `null`                                                                                                               | no       |
-| placement_constraints                        | Placement constraints for the ECS service.                                                                                                                        | `list`   | `{}`                                                                                                                 | no       |
-| platform_version                             | Platform version for the ECS service.                                                                                                                             | `string` | `null`                                                                                                               | no       |
-| propagate_tags                               | Indicates whether tags should be propagated to the service.                                                                                                       | `string` | `null`                                                                                                               | no       |
-| proxy_configuration                          | Proxy configuration for the ECS service.                                                                                                                          | `map`    | `null`                                                                                                               | no       |
-| requires_compatibilities                     | Required compatibilities for the ECS service.                                                                                                                     | `list`   | `["FARGATE"]`                                                                                                        | no       |
-| runtime_platform                             | Execution platform for the container.                                                                                                                             | `map`    | `{ operating_system_family = "LINUX", cpu_architecture = "X86_64" }`                                                 | no       |
-| scale                                        | ECS service scale.                                                                                                                                                | `map`    | `{}`                                                                                                                 | no       |
-| scheduling_strategy                          | ECS service scheduling strategy.                                                                                                                                  | `string` | `null`                                                                                                               | no       |
-| security_group_description                   | Security group description.                                                                                                                                       | `string` | `null`                                                                                                               | no       |
-| security_group_ids                           | Security group IDs associated with the ECS service.                                                                                                               | `list`   | `[]`                                                                                                                 | no       |
-| security_group_name                          | Security group name associated with the ECS service.                                                                                                              | `string` | `null`                                                                                                               | no       |
-| security_group_ingress_rules                 | Security group rules.                                                                                                                                             | `map`    | `local.security_group_rules_calculated[each.key]`                                                                    | no       |
-| security_group_tags                          | Security group tags.                                                                                                                                              | `map`    | `{}`                                                                                                                 | no       |
-| security_group_use_name_prefix               | Indicates whether a prefix should be used for the security group name.                                                                                            | `bool`   | `true`                                                                                                               | no       |
-| service_connect_configuration                | Service connection configuration.                                                                                                                                 | `map`    | `{}`                                                                                                                 | no       |
-| service_registries                           | Service records associated with the ECS service.                                                                                                                  | `list`   | `local.service_registries[each.key]`                                                                                 | no       |
-| service_tags                                 | ECS service tags.                                                                                                                                                 | `map`    | `{}`                                                                                                                 | no       |
-| skip_destroy                                 | Indicates whether to skip service destruction.                                                                                                                    | `bool`   | `null`                                                                                                               | no       |
-| subnet_ids                                   | Subnet IDs associated with the ECS service.                                                                                                                       | `list`   | `data.aws_subnets.this[each.key].ids`                                                                                | no       |
-| task_definition_arn                          | ARN of the task definition associated with the ECS service.                                                                                                       | `string` | `null`                                                                                                               | no       |
-| task_definition_placement_constraints        | Placement constraints for the task definition.                                                                                                                    | `map`    | `{}`                                                                                                                 | no       |
-| task_exec_iam_role_arn                       | ARN of the IAM role for task execution.                                                                                                                           | `string` | `null`                                                                                                               | no       |
-| task_exec_iam_role_description               | Description of the IAM role for task execution.                                                                                                                   | `string` | `null`                                                                                                               | no       |
-| task_exec_iam_role_max_session_duration      | Maximum session duration for the task execution IAM role.                                                                                                         | `number` | `null`                                                                                                               | no       |
-| task_exec_iam_role_name                      | Name of the IAM role for task execution.                                                                                                                          | `string` | `null`                                                                                                               | no       |
-| task_exec_iam_role_path                      | Path of the IAM role for task execution.                                                                                                                          | `string` | `null`                                                                                                               | no       |
-| task_exec_iam_role_permissions_boundary      | Permission limit of the IAM role for task execution.                                                                                                              | `string` | `null`                                                                                                               | no       |
-| task_exec_iam_role_policies                  | Policies of the IAM role for task execution.                                                                                                                      | `list`   | `{}`                                                                                                                 | no       |
-| task_exec_iam_role_tags                      | Tags of the IAM role for task execution.                                                                                                                          | `map`    | `{}`                                                                                                                 | no       |
-| task_exec_iam_role_use_name_prefix           | Indicates whether a prefix should be used for the IAM role name.                                                                                                  | `bool`   | `true`                                                                                                               | no       |
-| task_exec_iam_statements                     | IAM statements for the task execution role.                                                                                                                       | `list`   | `[]`                                                                                                                 | no       |
-| task_exec_secret_arns                        | ARNs of the secrets for task execution.                                                                                                                           | `list`   | `["arn:aws:secretsmanager:*:*:secret:${local.common_name}-${each.key}-*"]`                                           | no       |
-| task_exec_ssm_param_arns                     | ARNs of the SSM parameters for task execution.                                                                                                                    | `list`   | `["arn:aws:ssm:*:*:parameter/${local.common_name}-${each.key}-*"]`                                                   | no       |
-| task_tags                                    | Tags for the tasks.                                                                                                                                               | `map`    | `{}`                                                                                                                 | no       |
-| tasks_iam_role_arn                           | ARN of the IAM role for the tasks.                                                                                                                                | `string` | `null`                                                                                                               | no       |
-| tasks_iam_role_description                   | Description of the IAM role for the tasks.                                                                                                                        | `string` | `null`                                                                                                               | no       |
-| tasks_iam_role_name                          | Name of the IAM role for the tasks.                                                                                                                               | `string` | `null`                                                                                                               | no       |
-| tasks_iam_role_path                          | Path of the IAM role for the tasks.                                                                                                                               | `string` | `null`                                                                                                               | no       |
-| tasks_iam_role_permissions_boundary          | Permission limit of the IAM role for the tasks.                                                                                                                   | `string` | `null`                                                                                                               | no       |
-| tasks_iam_role_policies                      | Policies of the IAM role for the tasks.                                                                                                                           | `list`   | `{}`                                                                                                                 | no       |
-| tasks_iam_role_statements                    | IAM statements for the task role.                                                                                                                                 | `list`   | `[]`                                                                                                                 | no       |
-| tasks_iam_role_tags                          | Tags of the IAM role for the tasks.                                                                                                                               | `map`    | `{}`                                                                                                                 | no       |
-| tasks_iam_role_use_name_prefix               | Indicates whether a prefix should be used for the IAM role name.                                                                                                  | `bool`   | `true`                                                                                                               | no       |
-| timeouts                                     | Timeouts for the tasks.                                                                                                                                           | `map`    | `{}`                                                                                                                 | no       |
-| timeouts                                     | Timeouts for the tasks.                                                                                                                                           | `map`    | `{}`                                                                                                                 | no       |
-| track_latest                                 | Whether to track the last ACTIVE task definition in AWS or the one created with the stored resource in the state.                                                 | `bool`   | `true`                                                                                                               | no       |
-| volume                                       | Volume for the service.                                                                                                                                           | `list`   | `concat(try(local.container_module_ecs_task_volume_efs[each.key], []), try(each.value.service.ecs_task_volume, []))` | no       |
-| volume_configuration                         | Configuration for a volume specified in the task definition as a volume configured at startup. Currently, the only supported volume type is an Amazon EBS volume. | `map`    | `null`                                                                                                               | no       |
-| vpc_lattice_configurations                   | The VPC Lattice configuration for your service that allows Lattice to connect, protect, and monitor your service across multiple accounts and VPCs.               | `map`    | `null`                                                                                                               | no       |
-| wait_for_steady_state                        | Indicates whether to wait for a constant state.                                                                                                                   | `bool`   | `null`                                                                                                               | no       |
-| wait_until_stable                            | Indicates whether to wait until the service is stable.                                                                                                            | `bool`   | `null`                                                                                                               | no       |
-| wait_until_stable_timeout                    | Timeout until the service is stable.                                                                                                                              | `number` | `null`                                                                                                               | no       |
+| Name                                         | Description                                                                                        | Type     | Default                                                                                                              | Required   |
+| -------------------------------------------- | -------------------------------------------------------------------------------------------------- | -------- | -------------------------------------------------------------------------------------------------------------------- | ---------- |
+| Name                                         | Description                                                                                        | Type     | Default                                                                                                              | Required   |
+| ------                                       | -------------                                                                                      | ------   | ---------                                                                                                            | :--------: |
+| name                                         | ECS service instance name.                                                                         | `string` | `"${local.common_name}-${each.key}"`                                                                                 | no         |
+| alarms                                       | Alarms associated with the ECS service (e.g., CloudWatch).                                         | `map`    | `{}`                                                                                                                 | no         |
+| assign_public_ip                             | Indicates whether a public IP should be assigned to the ECS task.                                  | `bool`   | `false`                                                                                                              | no         |
+| autoscaling_max_capacity                     | Maximum auto-scaling capacity for the ECS service.                                                 | `number` | `10`                                                                                                                 | no         |
+| autoscaling_min_capacity                     | Minimum auto-scaling capacity for the ECS service.                                                 | `number` | `1`                                                                                                                  | no         |
+| autoscaling_policies                         | Auto-scaling policies defined for CPU and memory.                                                  | `map`    | `Default configuration for CPU and memory`                                                                           | no         |
+| autoscaling_scheduled_actions                | Scheduled actions for auto-scaling.                                                                | `map`    | `{}`                                                                                                                 | no         |
+| availability_zone_rebalancing                | Automatically redistributes tasks within a service between availability zones.                     | `string` | `"DISABLED"`                                                                                                         | no         |
+| cluster_arn                                  | ARN of the ECS cluster to which the service belongs.                                               | `string` | `data.aws_ecs_cluster.this[each.key].id`                                                                             | no         |
+| container_definitions                        | Container definitions for the ECS service.                                                         | `list`   | `local.container_definitions[each.key]`                                                                              | no         |
+| cpu                                          | CPU units for the ECS service.                                                                     | `number` | `1024`                                                                                                               | no         |
+| create                                       | Indicates whether the ECS service should be created.                                               | `bool`   | `true`                                                                                                               | no         |
+| create_iam_role                              | Indicates whether an IAM role should be created for the service.                                   | `bool`   | `true`                                                                                                               | no         |
+| create_infrastructure_iam_role               | Indicates whether an IAM role should be created for the infrastructure.                            | `bool`   | `false`                                                                                                              | no         |
+| create_security_group                        | Indicates whether a security group should be created.                                              | `bool`   | `true`                                                                                                               | no         |
+| create_service                               | Indicates whether the ECS service should be created.                                               | `bool`   | `false`                                                                                                              | no         |
+| create_task_definition                       | Indicates whether the task definition for the ECS service should be created.                       | `bool`   | `true`                                                                                                               | no         |
+| create_task_exec_iam_role                    | Indicates whether an IAM role should be created for task execution.                                | `bool`   | `true`                                                                                                               | no         |
+| create_task_exec_policy                      | Indicates whether a policy should be created for task execution.                                   | `bool`   | `true`                                                                                                               | no         |
+| create_tasks_iam_role                        | Indicates whether an IAM role should be created for tasks.                                         | `bool`   | `true`                                                                                                               | no         |
+| deployment_circuit_breaker                   | Circuit breaker configuration for deployments.                                                     | `map`    | `{}`                                                                                                                 | no         |
+| deployment_controller                        | Deployment controller for the ECS service.                                                         | `map`    | `{}`                                                                                                                 | no         |
+| deployment_maximum_percent                   | Maximum percentage of deployment during updates.                                                   | `number` | `200`                                                                                                                | no         |
+| deployment_minimum_healthy_percent           | Minimum percentage of healthy instances during deployment.                                         | `number` | `66`                                                                                                                 | no         |
+| desired_count                                | Desired number of running instances of the service.                                                | `number` | `1 (or 0 if ecs_execution_type is "schedule")`                                                                       | no         |
+| enable_autoscaling                           | Indicates whether auto-scaling should be enabled.                                                  | `bool`   | `true (or false if ecs_execution_type is "schedule")`                                                                | no         |
+| enable_ecs_managed_tags                      | Indicates whether ECS-managed tags should be enabled.                                              | `bool`   | `true`                                                                                                               | no         |
+| enable_execute_command                       | Indicates whether the execute command should be enabled on the ECS service.                        | `bool`   | `true`                                                                                                               | no         |
+| enable_fault_injection                       | Allows fault injection and accepts fault injection requests from task containers.                  | `bool`   | `false`                                                                                                              | no         |
+| ephemeral_storage                            | Ephemeral storage configuration for the ECS service.                                               | `map`    | `{}`                                                                                                                 | no         |
+| external_id                                  | External ID for the ECS service.                                                                   | `string` | `null`                                                                                                               | no         |
+| family                                       | Family of the ECS task definition.                                                                 | `string` | `null`                                                                                                               | no         |
+| force_delete                                 | Indicates whether to force deletion of the ECS service.                                            | `bool`   | `null`                                                                                                               | no         |
+| force_new_deployment                         | Indicates whether to force a new deployment of the ECS service.                                    | `bool`   | `true`                                                                                                               | no         |
+| health_check_grace_period_seconds            | Grace period for service health checks.                                                            | `number` | `null`                                                                                                               | no         |
+| iam_role_arn                                 | ARN of the IAM role associated with the ECS service.                                               | `string` | `null`                                                                                                               | no         |
+| iam_role_description                         | Description of the IAM role associated with the ECS service.                                       | `string` | `null`                                                                                                               | no         |
+| iam_role_name                                | Name of the IAM role associated with the ECS service.                                              | `string` | `null`                                                                                                               | no         |
+| iam_role_path                                | Path of the IAM role associated with the ECS service.                                              | `string` | `null`                                                                                                               | no         |
+| iam_role_permissions_boundary                | Permissions boundary of the IAM role associated with the ECS service.                              | `string` | `null`                                                                                                               | no         |
+| iam_role_statements                          | Permission statements for the IAM role.                                                            | `list`   | `[]`                                                                                                                 | no         |
+| iam_role_tags                                | Tags for the IAM role.                                                                             | `map`    | `{}`                                                                                                                 | no         |
+| iam_role_use_name_prefix                     | Indicates whether to use a prefix for the IAM role name.                                           | `bool`   | `true`                                                                                                               | no         |
+| ignore_task_definition_changes               | Indicates whether to ignore changes in the task definition.                                        | `bool`   | `false`                                                                                                              | no         |
+| infrastructure_iam_role_arn                  | ARN of the IAM role for infrastructure.                                                            | `string` | `null`                                                                                                               | no         |
+| infrastructure_iam_role_name                 | Name of the IAM role for infrastructure.                                                           | `string` | `null`                                                                                                               | no         |
+| infrastructure_iam_role_use_name_prefix      | Indicates whether to use a prefix for the infrastructure IAM role name.                            | `bool`   | `false`                                                                                                              | no         |
+| infrastructure_iam_role_path                 | Path of the IAM role for infrastructure.                                                           | `string` | `null`                                                                                                               | no         |
+| infrastructure_iam_role_description          | Description of the IAM role for infrastructure.                                                    | `string` | `null`                                                                                                               | no         |
+| infrastructure_iam_role_permissions_boundary | Permissions boundary of the IAM role for infrastructure.                                           | `string` | `null`                                                                                                               | no         |
+| infrastructure_iam_role_tags                 | Tags for the infrastructure IAM role.                                                              | `map`    | `null`                                                                                                               | no         |
+| ipc_mode                                     | IPC mode for the container.                                                                        | `string` | `null`                                                                                                               | no         |
+| launch_type                                  | Launch type of the ECS service.                                                                    | `string` | `"FARGATE"`                                                                                                          | no         |
+| load_balancer                                | Load balancer configuration.                                                                       | `map`    | `local.load_balancer_calculated[each.key]`                                                                           | no         |
+| memory                                       | Memory allocated to the ECS service container (in MiB).                                            | `number` | `2048`                                                                                                               | no         |
+| network_mode                                 | Network mode for the container.                                                                    | `string` | `"awsvpc"`                                                                                                           | no         |
+| ordered_placement_strategy                   | Ordered placement strategy for instances.                                                          | `map`    | `{}`                                                                                                                 | no         |
+| pid_mode                                     | PID mode for the container.                                                                        | `string` | `null`                                                                                                               | no         |
+| placement_constraints                        | Placement constraints for the ECS service.                                                         | `list`   | `{}`                                                                                                                 | no         |
+| platform_version                             | Platform version for the ECS service.                                                              | `string` | `null`                                                                                                               | no         |
+| propagate_tags                               | Indicates whether tags should be propagated to the service.                                        | `string` | `null`                                                                                                               | no         |
+| proxy_configuration                          | Proxy configuration for the ECS service.                                                           | `map`    | `null`                                                                                                               | no         |
+| requires_compatibilities                     | Required compatibilities for the ECS service.                                                      | `list`   | `["FARGATE"]`                                                                                                        | no         |
+| runtime_platform                             | Runtime platform for the container.                                                                | `map`    | `{ operating_system_family = "LINUX", cpu_architecture = "X86_64" }`                                                 | no         |
+| scale                                        | Scaling configuration for the ECS service.                                                         | `map`    | `{}`                                                                                                                 | no         |
+| scheduling_strategy                          | Scheduling strategy for the ECS service.                                                           | `string` | `null`                                                                                                               | no         |
+| security_group_description                   | Description for the security group.                                                                | `string` | `null`                                                                                                               | no         |
+| security_group_ids                           | Security group IDs associated with the ECS service.                                                | `list`   | `[]`                                                                                                                 | no         |
+| security_group_name                          | Name of the security group associated with the ECS service.                                        | `string` | `null`                                                                                                               | no         |
+| security_group_ingress_rules                 | Ingress rules for the security group.                                                              | `map`    | `local.security_group_rules_calculated[each.key]`                                                                    | no         |
+| security_group_tags                          | Tags for the security group.                                                                       | `map`    | `{}`                                                                                                                 | no         |
+| security_group_use_name_prefix               | Indicates whether to use a prefix for the security group name.                                     | `bool`   | `true`                                                                                                               | no         |
+| service_connect_configuration                | Service Connect configuration.                                                                     | `map`    | `{}`                                                                                                                 | no         |
+| service_registries                           | Service registries associated with the ECS service.                                                | `list`   | `local.service_registries[each.key]`                                                                                 | no         |
+| service_tags                                 | Tags for the ECS service.                                                                          | `map`    | `{}`                                                                                                                 | no         |
+| skip_destroy                                 | Indicates whether to skip service destruction.                                                     | `bool`   | `null`                                                                                                               | no         |
+| subnet_ids                                   | Subnet IDs associated with the ECS service.                                                        | `list`   | `data.aws_subnets.this[each.key].ids`                                                                                | no         |
+| task_definition_arn                          | ARN of the task definition associated with the ECS service.                                        | `string` | `null`                                                                                                               | no         |
+| task_definition_placement_constraints        | Placement constraints for the task definition.                                                     | `map`    | `{}`                                                                                                                 | no         |
+| task_exec_iam_role_arn                       | ARN of the IAM role for task execution.                                                            | `string` | `null`                                                                                                               | no         |
+| task_exec_iam_role_description               | Description of the IAM role for task execution.                                                    | `string` | `null`                                                                                                               | no         |
+| task_exec_iam_role_max_session_duration      | Maximum session duration for the task execution IAM role.                                          | `number` | `null`                                                                                                               | no         |
+| task_exec_iam_role_name                      | Name of the IAM role for task execution.                                                           | `string` | `null`                                                                                                               | no         |
+| task_exec_iam_role_path                      | Path of the IAM role for task execution.                                                           | `string` | `null`                                                                                                               | no         |
+| task_exec_iam_role_permissions_boundary      | Permissions boundary for the task execution IAM role.                                              | `string` | `null`                                                                                                               | no         |
+| task_exec_iam_role_policies                  | Policies for the task execution IAM role.                                                          | `list`   | `{}`                                                                                                                 | no         |
+| task_exec_iam_role_tags                      | Tags for the task execution IAM role.                                                              | `map`    | `{}`                                                                                                                 | no         |
+| task_exec_iam_role_use_name_prefix           | Indicates whether to use a prefix for the task execution IAM role name.                            | `bool`   | `true`                                                                                                               | no         |
+| task_exec_iam_statements                     | IAM statements for the task execution role.                                                        | `list`   | `[]`                                                                                                                 | no         |
+| task_exec_secret_arns                        | ARNs of secrets for task execution.                                                                | `list`   | `["arn:aws:secretsmanager:*:*:secret:${local.common_name}-${each.key}-*"]`                                           | no         |
+| task_exec_ssm_param_arns                     | ARNs of SSM parameters for task execution.                                                         | `list`   | `["arn:aws:ssm:*:*:parameter/${local.common_name}-${each.key}-*"]`                                                   | no         |
+| task_tags                                    | Tags for the tasks.                                                                                | `map`    | `{}`                                                                                                                 | no         |
+| tasks_iam_role_arn                           | ARN of the IAM role for tasks.                                                                     | `string` | `null`                                                                                                               | no         |
+| tasks_iam_role_description                   | Description of the IAM role for tasks.                                                             | `string` | `null`                                                                                                               | no         |
+| tasks_iam_role_name                          | Name of the IAM role for tasks.                                                                    | `string` | `null`                                                                                                               | no         |
+| tasks_iam_role_path                          | Path of the IAM role for tasks.                                                                    | `string` | `null`                                                                                                               | no         |
+| tasks_iam_role_permissions_boundary          | Permissions boundary for the tasks IAM role.                                                       | `string` | `null`                                                                                                               | no         |
+| tasks_iam_role_policies                      | Policies for the tasks IAM role.                                                                   | `list`   | `{}`                                                                                                                 | no         |
+| tasks_iam_role_statements                    | IAM statements for the tasks role.                                                                 | `list`   | `[]`                                                                                                                 | no         |
+| tasks_iam_role_tags                          | Tags for the tasks IAM role.                                                                       | `map`    | `{}`                                                                                                                 | no         |
+| tasks_iam_role_use_name_prefix               | Indicates whether to use a prefix for the tasks IAM role name.                                     | `bool`   | `true`                                                                                                               | no         |
+| timeouts                                     | Timeout configuration for operations.                                                              | `map`    | `{}`                                                                                                                 | no         |
+| track_latest                                 | Whether to track the latest ACTIVE task definition in AWS or the one stored in state.              | `bool`   | `true`                                                                                                               | no         |
+| volume                                       | Volume configuration for the service.                                                              | `list`   | `concat(try(local.container_module_ecs_task_volume_efs[each.key], []), try(each.value.service.ecs_task_volume, []))` | no         |
+| volume_configuration                         | Configuration for volumes specified in the task definition. Currently supports Amazon EBS volumes. | `map`    | `null`                                                                                                               | no         |
+| vpc_lattice_configurations                   | VPC Lattice configuration for cross-account and cross-VPC service connectivity.                    | `map`    | `null`                                                                                                               | no         |
+| wait_for_steady_state                        | Indicates whether to wait for a steady state.                                                      | `bool`   | `null`                                                                                                               | no         |
+| wait_until_stable                            | Indicates whether to wait until the service is stable.                                             | `bool`   | `null`                                                                                                               | no         |
+| wait_until_stable_timeout                    | Timeout for waiting until the service is stable.                                                   | `number` | `null`                                                                                                               | no         |
 
 
 
