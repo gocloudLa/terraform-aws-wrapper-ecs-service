@@ -1,5 +1,8 @@
 module_name: Terraform ECS Service Module
-module_description: The Terraform Wrapper for ECS SERVICE is a comprehensive solution module for deploying containerized applications in the Amazon Elastic Container Service.
+module_description: |
+  The Terraform Wrapper for ECS SERVICE is a comprehensive, production-ready solution module for deploying and managing containerized applications in Amazon Elastic Container Service (ECS).
+  
+  This module provides enterprise-grade features including automated load balancer integration, service discovery, persistent storage with EFS, comprehensive monitoring and alerting, scheduled task execution, and seamless DNS management. Built with security best practices and operational excellence in mind, it simplifies complex ECS deployments while maintaining flexibility and scalability.
 module_badges:
   - url: "https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/releases/latest"
     image: "https://img.shields.io/github/v/release/gocloudLa/terraform-aws-wrapper-ecs-service.svg?style=for-the-badge"
@@ -353,7 +356,9 @@ features:
     title: Integration with Service Discovery
     short_description: Supports integration with CloudMap / Service Discovery, automates integration.
     long_description: |
-      Supports integration with CloudMap / Service Discovery, automates integration.
+      Enables seamless integration with AWS CloudMap (Service Discovery) for service-to-service communication within your VPC.<br/>
+      Automatically registers ECS services with CloudMap namespaces, allowing services to discover and communicate with each other using DNS names.<br/>
+      **Note**: Only one service discovery configuration is allowed per ECS service.
     examples:
       - title: Configuration Code
         code: |
@@ -464,7 +469,9 @@ features:
     title: Integration with EFS
     short_description: Mounts EFS volumes for containers, shared across services
     long_description: |
-      Subscribe to the containers to mount an EFS (Elastic File System / NFS) volume previously generated at the project level or externally (manually generated).
+      Enables containers to mount EFS (Elastic File System / NFS) volumes for persistent, shared storage across multiple services and tasks.<br/>
+      Supports mounting previously created EFS volumes at the project level or externally managed volumes.<br/>
+      Provides flexible configuration for read-only and read-write access points, enabling data sharing and persistence across container restarts.
     examples:
       - title: Configuration Code
         code: |
@@ -552,7 +559,9 @@ features:
     title: Scheduled Task Support
     short_description: Scheduled task execution based on cron schedule
     long_description: |
-      A task is configured that, instead of running as a service, runs based on a schedule (scheduler / cron).
+      Configures ECS tasks to run on a scheduled basis using cron expressions instead of running as continuous services.<br/>
+      Supports integration with AWS Lambda triggers for enhanced scheduling capabilities and monitoring.<br/>
+      Perfect for batch jobs, data processing tasks, maintenance operations, and other time-based workloads.
     examples:
       - title: Configuration Code
         code: |
@@ -585,11 +594,16 @@ features:
     title: Logs Notification
     short_description: Configures log subscription filter to notify on non-INFO/DEBUG events
     long_description: |
-      The module generates a subscription filter on the log_group of the services and sends the events that meet the search pattern to the notification lambda function generated from the foundation level by **wrapper_notifications**.<br/><br/>
-      Currently, it only searches in a Json log format and notifies if the severity of the event is different from "INFO" or "DEBUG". In the future, this will be configurable<br/>
-      ```
-      Current Filter: "{ $.level != \"INFO\" && $.level != \"DEBUG\" }"
+      Automatically creates CloudWatch Logs subscription filters for ECS service log groups to monitor and alert on critical events.<br/>
+      Integrates with the **wrapper_notifications** Lambda function from the foundation level to send notifications when log events match specific patterns.<br/><br/>
+      **Current Capabilities:**
+      - Monitors JSON-formatted logs for severity levels other than "INFO" or "DEBUG"
+      - Sends real-time notifications for ERROR, WARN, FATAL, and other critical log levels
+      - Configurable filter patterns (future enhancement)
       
+      **Current Filter Pattern:**
+      ```
+      "{ $.level != \"INFO\" && $.level != \"DEBUG\" }"
       ```
     examples:
       - title: Configuration Code
@@ -614,7 +628,21 @@ features:
     title: Alarm Notification
     short_description: Configures CPU/memory alarms and task restart alerts with SNS notifications
     long_description: |
-      The module allows the creation of alarms for CPU and Memory usage via cloudwatch and the creation of alarms by EventBridge to capture restarts of an ECS task. Both subscribe to an SNS for notification and also support changing any alarm value, disabling it, or creating a custom alarm.
+      Comprehensive monitoring and alerting system for ECS services using CloudWatch and EventBridge integrations.<br/><br/>
+      **CloudWatch Alarms:**
+      - CPU and Memory utilization monitoring with configurable thresholds
+      - Support for custom alarm configurations and overrides
+      - Ability to disable specific alarms or create custom metrics
+      
+      **EventBridge Integration:**
+      - Automatic detection of ECS task restarts and failures
+      - Configurable event patterns for different failure scenarios
+      - Real-time notifications for task state changes
+      
+      **Notification Features:**
+      - SNS integration for multi-channel notifications (email, SMS, Slack, etc.)
+      - Customizable alarm tags for organization and routing
+      - Support for both warning and critical alert levels
     examples:
       - title: Configuration Code
         code: |
