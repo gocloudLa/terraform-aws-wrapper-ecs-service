@@ -123,7 +123,7 @@ locals {
 
 data "aws_sns_topic" "cw_alarms_sns_topic_name" {
   count = local.enable_alarms_notifications
-  name  = try(var.ecs_service_defaults.alarms_defaults.cw_alarms_sns_topic_name, "${local.common_name_base}-alerts")
+  name  = try(var.ecs_service_defaults.alarms_defaults.cw_alarms_sns_topic_name, "${local.default_sns_topic_name}")
 }
 
 /*----------------------------------------------------------------------*/

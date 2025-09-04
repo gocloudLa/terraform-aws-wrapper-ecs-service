@@ -21,7 +21,7 @@ locals {
 
 data "aws_lambda_function" "notifications" {
   count         = local.create_logs_notifications == {} ? 0 : 1
-  function_name = "${local.common_name_base}-notifications"
+  function_name = "${local.common_name_prefix}-notifications"
 }
 
 resource "aws_lambda_permission" "notifications" {
