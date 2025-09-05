@@ -958,6 +958,7 @@ ecs_service_parameters = {
 | wait_for_steady_state                        | Indicates whether to wait for a steady state.                                                      | `bool`   | `null`                                                                                                               | no       |
 | wait_until_stable                            | Indicates whether to wait until the service is stable.                                             | `bool`   | `null`                                                                                                               | no       |
 | wait_until_stable_timeout                    | Timeout for waiting until the service is stable.                                                   | `number` | `null`                                                                                                               | no       |
+| tags                                         | A map of tags to assign to resources.                                                              | `map`    | `{}`                                                                                                                 | no       |
 
 
 
