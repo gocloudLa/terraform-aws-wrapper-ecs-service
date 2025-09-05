@@ -150,5 +150,5 @@ module "ecs_service" {
   wait_until_stable                       = try(each.value.wait_until_stable, var.ecs_service_defaults.wait_until_stable, null)
   wait_until_stable_timeout               = try(each.value.wait_until_stable_timeout, var.ecs_service_defaults.wait_until_stable_timeout, null)
 
-  tags = merge(local.common_tags, { workload = "${each.key}" })
+  tags = merge(local.common_tags, { workload = "${each.key}" }, try(each.value.tags, var.ecs_service_defaults.tags, null))
 }
