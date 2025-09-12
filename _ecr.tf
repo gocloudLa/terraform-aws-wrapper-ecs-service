@@ -8,7 +8,7 @@ locals {
         "repository_name"                                  = try(container.repository_name, null)
         "repository_lifecycle_policy"                      = try(container.repository_lifecycle_policy, null)
         "repository_image_tag_mutability"                  = try(container.repository_image_tag_mutability, "MUTABLE")
-        "repository_image_tag_mutability_exclusion_filter" = try(job.repository_image_tag_mutability_exclusion_filter, null)
+        "repository_image_tag_mutability_exclusion_filter" = try(container.repository_image_tag_mutability_exclusion_filter, null)
         "repository_read_access_arns"                      = try(container.repository_read_access_arns, [])
         "repository_read_write_access_arns"                = try(container.repository_read_write_access_arns, [])
       }
