@@ -1,6 +1,6 @@
 module "ecs_lambda_trigger_lambda" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.0.1"
+  version = "8.1.0"
 
   create_function = var.create
   function_name   = "trigger_${var.eventbridge_name}"
