@@ -62,7 +62,7 @@ module "wrapper_ecs_service" {
               #cidr_blocks    = [""]  # Default: [vpc_cidr]
               load_balancer = {
                 "alb1" = {
-                  alb_name = "dmc-prd-core-external-00"
+                  alb_name = "dmc-prd-example-ExExternal01"
                   #    #if you want set a target group custom name
                   #    target_group_custom_name = "${local.common_name}-ExSimpleEcr"
                   listener_rules = {
@@ -118,7 +118,7 @@ module "wrapper_ecs_service" {
               container_port = 80
               load_balancer = {
                 "alb1" = {
-                  alb_name = "dmc-prd-core-external-00"
+                  alb_name = "dmc-prd-example-ExExternal01"
                   listener_rules = {
                     "rule1" = {
                       # priority          = 10
@@ -178,7 +178,7 @@ module "wrapper_ecs_service" {
               container_port = 80
               load_balancer = {
                 "alb1" = {
-                  alb_name = "dmc-prd-core-external-00"
+                  alb_name = "dmc-prd-example-ExExternal01"
                   listener_rules = {
                     "rule1" = {
                       # priority          = 10
@@ -277,7 +277,7 @@ module "wrapper_ecs_service" {
               container_port = 8080
               load_balancer = {
                 "alb1" = {
-                  alb_name = "dmc-prd-core-external-00"
+                  alb_name = "dmc-prd-example-ExExternal01"
                   listener_rules = {
                     "rule1" = {
                       # priority          = 10
@@ -330,7 +330,7 @@ module "wrapper_ecs_service" {
               # cidr_blocks    = [""]  # Default: [vpc_cidr]
               load_balancer = {
                 "alb1" = {
-                  alb_name = "dmc-prd-core-external-00"
+                  alb_name = "dmc-prd-example-ExExternal01"
                   # target_group_custom_name = "custom-name" # Default: "${local.common_name}-${service_name}-${port_values.container_port}-${alb_key}"
                   alb_listener_port    = 443
                   deregistration_delay = 300
@@ -426,7 +426,7 @@ module "wrapper_ecs_service" {
               # cidr_blocks    = [""]  # Default: [vpc_cidr]
               load_balancer = {
                 "alb1" = {
-                  alb_name          = "dmc-prd-core-external-00"
+                  alb_name          = "dmc-prd-example-ExExternal01"
                   alb_listener_port = 443
                   dns_records = {
                     "AlbMulti1" = {
@@ -445,7 +445,7 @@ module "wrapper_ecs_service" {
                   }
                 }
                 "alb2" = {
-                  alb_name          = "dmc-prd-core-external-00" # Can be another ALB / Internal for example
+                  alb_name          = "dmc-prd-example-ExExternal01" # Can be another ALB / Internal for example
                   alb_listener_port = 443
                   dns_records = {
                     "AlbMulti2" = {
@@ -499,7 +499,7 @@ module "wrapper_ecs_service" {
               # cidr_blocks    = [""]  # Default: [vpc_cidr]
               load_balancer = {
                 "alb1" = {
-                  alb_name          = "dmc-prd-core-external-00"
+                  alb_name          = "dmc-prd-example-ExExternal01"
                   alb_listener_port = 443
                   dns_records = {
                     "ExDns" = {
@@ -733,7 +733,7 @@ module "wrapper_ecs_service" {
               container_port = 80
               load_balancer = {
                 "alb1" = {
-                  alb_name = "dmc-prd-core-external-00"
+                  alb_name = "dmc-prd-example-ExExternal01"
                   listener_rules = {
                     "rule1" = {
                       # priority          = 10
