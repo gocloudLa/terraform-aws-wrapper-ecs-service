@@ -200,6 +200,18 @@ locals {
       })
       # targets_sns = ["arn-sns-1", "arn-sns-2"]  ## Can add multiple sns targets to same rule. If you not specify, it will use the default sns topic.
     }
+    "capacity-unavailable" = {
+      event_bus_name = local.default_event_bus_name # to control EventBridge Bus and related resources
+      description    = "Capacity for ECS is unavailable at this time."
+      event_pattern = jsonencode({
+        "source" : ["aws.ecs"],
+        "detail-type" : ["ECS Service Action"],
+        "detail" : {
+          "eventName" : ["SERVICE_TASK_PLACEMENT_FAILURE"],
+        }
+      })
+      # targets_sns = ["arn-sns-1", "arn-sns-2"]  ## Can add multiple sns targets to same rule. If you not specify, it will use the default sns topic.
+    }
   }
 
   eb_alarms_default_parameters_tmp = [
