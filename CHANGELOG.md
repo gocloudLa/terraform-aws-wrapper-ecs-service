@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/compare/v1.0.0...v1.0.1) (2025-09-18)
+
+
+### Bug Fixes
+
+* **terraform:** external modules upgrade 20250910 ([47e8874](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/commit/47e8874a8e2f9349420de7a0c0129965a289c382))
+
 ## 1.0.0 (2025-09-05)
 
 
