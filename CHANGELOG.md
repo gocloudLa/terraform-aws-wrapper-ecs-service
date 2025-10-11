@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/compare/v1.0.1...v1.1.0) (2025-10-11)
+
+
+### Features
+
+* **alarms:** add capacity unavailable alarm ([#4](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/issues/4)) ([3650695](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/commit/36506957de99b783439b8cfee1bfd2dae0f82cbb))
+
 ## [1.0.1](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/compare/v1.0.0...v1.0.1) (2025-09-18)
 
 
