@@ -1012,9 +1012,15 @@ input_table: |
   | wait_for_steady_state | Indicates whether to wait for a steady state. | `bool` | `null` | no |
   | wait_until_stable | Indicates whether to wait until the service is stable. | `bool` | `null` | no |
   | wait_until_stable_timeout | Timeout for waiting until the service is stable. | `number` | `null` | no |
-  | tags | A map of tags to assign to resources. | `map` | `{}` | no |
+  | repository_name | The name of the ECR repository. | `string` | `null` | no |
+  | repository_lifecycle_policy | The policy document for ECR repository lifecycle. | `string` | `null` | no |
+  | repository_image_tag_mutability | The tag mutability setting for the repository. | `string` | `"MUTABLE"` | no |
+  | repository_image_tag_mutability_exclusion_filter | Configuration block that defines filters to specify which image tags can override the default tag mutability setting. | `list` | `null` | no |
+  | repository_read_access_arns | The ARNs of the IAM users/roles that have read access to the repository. | `list` | `[]` | no |
+  | repository_read_write_access_arns | The ARNs of the IAM users/roles that have read/write access to the repository. | `list` | `[]` | no |
   | manage_registry_scanning_configuration | Determines whether the registry scanning configuration will be managed. | `bool` | `false` | no |
   | registry_scan_type | The scanning type to set for the registry. Can be either ENHANCED or BASIC. | `string` | `"ENHANCED"` | no |
   | registry_scan_rules | One or multiple blocks specifying scanning rules to determine which repository filters are used and at what frequency scanning will occur. | `list` | `null` | no |
   | create_registry_replication_configuration | Determines whether a registry replication configuration will be created. | `bool` | `false` | no |
   | registry_replication_rules | The replication rules for a replication configuration. A maximum of 10 are allowed. | `list` | `null` | no |
+  | tags | A map of tags to assign to resources. | `map` | `{}` | no |
