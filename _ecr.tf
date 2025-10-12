@@ -11,6 +11,13 @@ locals {
         "repository_image_tag_mutability_exclusion_filter" = try(container.repository_image_tag_mutability_exclusion_filter, null)
         "repository_read_access_arns"                      = try(container.repository_read_access_arns, [])
         "repository_read_write_access_arns"                = try(container.repository_read_write_access_arns, [])
+        # Registry Scanning Configuration
+        "manage_registry_scanning_configuration"          = try(container.manage_registry_scanning_configuration, false)
+        "registry_scan_type"                              = try(container.registry_scan_type, "ENHANCED")
+        "registry_scan_rules"                             = try(container.registry_scan_rules, null)
+        # Registry Replication Configuration
+        "create_registry_replication_configuration"       = try(container.create_registry_replication_configuration, false)
+        "registry_replication_rules"                       = try(container.registry_replication_rules, null)
       }
       if(try(container.create_ecr_repository, true) == true && !can(container.image))
     }
@@ -47,7 +54,17 @@ module "ecr" {
   repository_image_tag_mutability                  = each.value.repository_image_tag_mutability
   repository_image_tag_mutability_exclusion_filter = each.value.repository_image_tag_mutability_exclusion_filter
   repository_force_delete                          = true
-  tags                                             = local.common_tags
+
+  # Registry Scanning Configuration
+  manage_registry_scanning_configuration = each.value.manage_registry_scanning_configuration
+  registry_scan_type                     = each.value.registry_scan_type
+  registry_scan_rules                    = each.value.registry_scan_rules
+
+  # Registry Replication Configuration
+  create_registry_replication_configuration = each.value.create_registry_replication_configuration
+  registry_replication_rules                = each.value.registry_replication_rules
+
+  tags = local.common_tags
 }
 
 output "ecr" {
