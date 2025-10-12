@@ -12,12 +12,12 @@ locals {
         "repository_read_access_arns"                      = try(container.repository_read_access_arns, [])
         "repository_read_write_access_arns"                = try(container.repository_read_write_access_arns, [])
         # Registry Scanning Configuration
-        "manage_registry_scanning_configuration"          = try(container.manage_registry_scanning_configuration, false)
-        "registry_scan_type"                              = try(container.registry_scan_type, "ENHANCED")
-        "registry_scan_rules"                             = try(container.registry_scan_rules, null)
+        "manage_registry_scanning_configuration" = try(container.manage_registry_scanning_configuration, false)
+        "registry_scan_type"                     = try(container.registry_scan_type, "ENHANCED")
+        "registry_scan_rules"                    = try(container.registry_scan_rules, null)
         # Registry Replication Configuration
-        "create_registry_replication_configuration"       = try(container.create_registry_replication_configuration, false)
-        "registry_replication_rules"                       = try(container.registry_replication_rules, null)
+        "create_registry_replication_configuration" = try(container.create_registry_replication_configuration, false)
+        "registry_replication_rules"                = try(container.registry_replication_rules, null)
       }
       if(try(container.create_ecr_repository, true) == true && !can(container.image))
     }
