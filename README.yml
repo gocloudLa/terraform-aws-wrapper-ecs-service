@@ -785,6 +785,122 @@ features:
               }
           }
           ```
+  - icon: 🔍
+    title: ECR Registry Scanning & Replication
+    short_description: Advanced ECR registry scanning and cross-region replication capabilities
+    long_description: |
+      Provides comprehensive ECR registry management with advanced scanning and replication features.<br/><br/>
+      
+      **Registry Scanning Configuration:**
+      - Enhanced or Basic scanning types with configurable rules
+      - Support for SCAN_ON_PUSH and CONTINUOUS_SCAN frequencies
+      - Wildcard and prefix-based filtering for targeted scanning
+      
+      **Registry Replication Configuration:**
+      - Cross-region image replication for disaster recovery and performance
+      - Configurable destination regions and registry IDs
+      - Repository filtering for selective replication
+      
+      **Image Tag Mutability:**
+      - Configurable tag mutability settings (MUTABLE, IMMUTABLE, etc.)
+      - Exclusion filters for specific tag patterns
+      - Support for wildcard-based tag filtering
+    examples:
+      - title: Configuration Code
+        code: |
+          ```hcl
+          ecs_service_parameters = {
+            ExEcrAdvanced = {
+              enable_autoscaling = false
+              enable_execute_command = true
+          
+              # Policies used by tasks from the developed code
+              tasks_iam_role_policies   = {}
+              tasks_iam_role_statements = []
+              # Policies used by the service to start tasks (ecr / ssm / etc)
+              task_exec_iam_role_policies = {}
+              task_exec_iam_statements    = []
+          
+              ecs_task_volume = []
+          
+              containers = {
+                app = {
+                  # Registry Scanning Configuration
+                  manage_registry_scanning_configuration = true
+                  registry_scan_type                     = "ENHANCED"
+                  registry_scan_rules = [
+                    {
+                      scan_frequency = "SCAN_ON_PUSH"
+                      filter = [
+                        {
+                          filter      = "prod-*"
+                          filter_type = "WILDCARD"
+                        },
+                        {
+                          filter      = "release-*"
+                          filter_type = "WILDCARD"
+                        }
+                      ]
+                    },
+                    {
+                      scan_frequency = "CONTINUOUS_SCAN"
+                      filter = [
+                        {
+                          filter      = "latest"
+                          filter_type = "WILDCARD"
+                        }
+                      ]
+                    }
+                  ]
+
+                  # Registry Replication Configuration
+                  create_registry_replication_configuration = true
+                  registry_replication_rules = [
+                    {
+                      destinations = [
+                        {
+                          region      = "us-west-2"
+                          registry_id = "012345678901"
+                        },
+                        {
+                          region      = "eu-west-1"
+                          registry_id = "012345678901"
+                        }
+                      ]
+                      repository_filters = [
+                        {
+                          filter      = "prod-microservice"
+                          filter_type = "PREFIX_MATCH"
+                        }
+                      ]
+                    }
+                  ]
+
+                  # Image Tag Mutability
+                  repository_image_tag_mutability = "MUTABLE_WITH_EXCLUSION"
+                  repository_image_tag_mutability_exclusion_filter = [
+                    {
+                      filter      = "latest*"
+                      filter_type = "WILDCARD"
+                    },
+                    {
+                      filter      = "dev-*"
+                      filter_type = "WILDCARD"
+                    },
+                    {
+                      filter      = "qa-*"
+                      filter_type = "WILDCARD"
+                    }
+                  ]
+
+                  map_environment = {}
+                  map_secrets     = {}
+                  mount_points    = []
+                }
+              }
+            }
+          }
+          ```
 important_notes: ""
 input_table: |
   | name | ECS service instance name. | `string` | `"${local.common_name}-${each.key}"` | no |
@@ -896,4 +1012,15 @@ input_table: |
   | wait_for_steady_state | Indicates whether to wait for a steady state. | `bool` | `null` | no |
   | wait_until_stable | Indicates whether to wait until the service is stable. | `bool` | `null` | no |
   | wait_until_stable_timeout | Timeout for waiting until the service is stable. | `number` | `null` | no |
+  | repository_name | The name of the ECR repository. | `string` | `null` | no |
+  | repository_lifecycle_policy | The policy document for ECR repository lifecycle. | `string` | `null` | no |
+  | repository_image_tag_mutability | The tag mutability setting for the repository. | `string` | `"MUTABLE"` | no |
+  | repository_image_tag_mutability_exclusion_filter | Configuration block that defines filters to specify which image tags can override the default tag mutability setting. | `list` | `null` | no |
+  | repository_read_access_arns | The ARNs of the IAM users/roles that have read access to the repository. | `list` | `[]` | no |
+  | repository_read_write_access_arns | The ARNs of the IAM users/roles that have read/write access to the repository. | `list` | `[]` | no |
+  | manage_registry_scanning_configuration | Determines whether the registry scanning configuration will be managed. | `bool` | `false` | no |
+  | registry_scan_type | The scanning type to set for the registry. Can be either ENHANCED or BASIC. | `string` | `"ENHANCED"` | no |
+  | registry_scan_rules | One or multiple blocks specifying scanning rules to determine which repository filters are used and at what frequency scanning will occur. | `list` | `null` | no |
+  | create_registry_replication_configuration | Determines whether a registry replication configuration will be created. | `bool` | `false` | no |
+  | registry_replication_rules | The replication rules for a replication configuration. A maximum of 10 are allowed. | `list` | `null` | no |
   | tags | A map of tags to assign to resources. | `map` | `{}` | no |
