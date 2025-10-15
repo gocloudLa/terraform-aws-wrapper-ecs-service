@@ -13,6 +13,7 @@ module "wrapper_ecs_service" {
   /*----------------------------------------------------------------------*/
 
   ecs_service_parameters = {
+
     ExSimple = {
       # ecs_cluster_name                       = "dmc-prd-core-00"  # (Optional) Auto Discovery
       # vpc_name                               = "dmc-prd"          # (Optional) Auto Discovery
@@ -753,6 +754,91 @@ module "wrapper_ecs_service" {
       }
     }
 
+    ExCapacityProvider = {
+      # ecs_cluster_name                       = "dmc-prd-core-00"  # (Optional) Auto Discovery
+      # vpc_name                               = "dmc-prd"          # (Optional) Auto Discovery
+      # subnet_name                            = "dmc-prd-private*" # (Optional) Auto Discovery
+
+      enable_autoscaling       = true
+      desired_count            = 3
+      autoscaling_max_capacity = 3
+      autoscaling_min_capacity = 3
+
+      cpu    = 512
+      memory = 1024
+
+      # Capacity Provider Strategy 1 in Fargate and the rest with 50% in SPOT and 50% in Fargate
+      capacity_provider_strategy = {
+        fargate = {
+          capacity_provider = "FARGATE"
+          weight            = 50
+          base              = 1
+        }
+        fargate_spot = {
+          capacity_provider = "FARGATE_SPOT"
+          weight            = 50
+          base              = 0
+        }
+      }
+      # Capacity Provider Strategy all SPOT
+      #capacity_provider_strategy = {
+      #  fargate_spot = {
+      #    capacity_provider = "FARGATE_SPOT"
+      #    weight = 100
+      #    base   = 1
+      #  }
+      #}
+
+      # Capacity Provider Strategy one in Fargate and rest in SPOT
+      #capacity_provider_strategy = {
+      #  fargate = {
+      #    capacity_provider = "FARGATE"
+      #    weight = 0
+      #    base   = 1
+      #  }
+      #  fargate_spot = {
+      #    capacity_provider = "FARGATE_SPOT"
+      #    weight = 100
+      #    base   = 0
+      #  }
+      #}
+
+      enable_execute_command = true
+
+      # ALARMS CONFIGURATION
+      enable_alarms = false # Default: false
+
+      # Policies used by tasks from the developed code
+      tasks_iam_role_policies = {
+        ReadOnlyAccess = "arn:aws:iam::aws:policy/ReadOnlyAccess"
+      }
+      tasks_iam_role_statements = [
+        {
+          actions   = ["s3:List*"]
+          resources = ["arn:aws:s3:::*"]
+        }
+      ]
+      # Policies used by the service to start tasks (ecr / ssm / etc)
+      task_exec_iam_role_policies = {}
+      task_exec_iam_statements    = []
+
+      ecs_task_volume = []
+
+      containers = {
+        app = {
+          image                 = "public.ecr.aws/docker/library/nginx:latest"
+          create_ecr_repository = false
+          map_environment       = {}
+          map_secrets           = {}
+          mount_points          = []
+          ports = {
+            "port1" = {
+              container_port = 80
+            }
+          }
+        }
+      }
+    }
   }
   /*
   ecs_service_defaults = {

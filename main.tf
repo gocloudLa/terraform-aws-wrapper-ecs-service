@@ -33,14 +33,14 @@ module "ecs_service" {
   availability_zone_rebalancing = try(each.value.availability_zone_rebalancing, var.ecs_service_defaults.availability_zone_rebalancing, "DISABLED")
   capacity_provider_strategy = try(each.value.capacity_provider_strategy, var.ecs_service_defaults.capacity_provider_strategy, {
     fargate = {
-      base              = null
+      base              = 1
       capacity_provider = "FARGATE"
-      weight            = 50
+      weight            = 100
     }
     fargate_spot = {
-      base              = null
+      base              = 0
       capacity_provider = "FARGATE_SPOT"
-      weight            = 50
+      weight            = 0
     }
   })
   cluster_arn                                  = data.aws_ecs_cluster.this[each.key].id
