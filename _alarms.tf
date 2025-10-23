@@ -54,17 +54,17 @@ locals {
       merge(
         value,
         {
-          alarm_name          = "${split("/", value.namespace)[1]}-${alarm}-${local.common_name}-${service_name}"
+          alarm_name          = "ECS-${alarm}-${local.common_name}-${service_name}"
           alarm_description   = "Service[${service_name}] ${value.description}"
           actions_enabled     = try(values.alarms_cw_overrides[alarm].actions_enabled, true)
           comparison_operator = try(values.alarms_cw_overrides[alarm].comparison_operator, value.comparison_operator, "GreaterThanOrEqualToThreshold")
           datapoints_to_alarm = try(values.alarms_cw_overrides[alarm].datapoints_to_alarm, value.datapoints_to_alarm, 5)
           evaluation_periods  = try(values.alarms_cw_overrides[alarm].evaluation_periods, value.evaluation_periods, 5)
-          namespace           = try(values.alarms_cw_overrides[alarm].threshold, value.threshold, "AWS/ECS")
+          namespace           = try(values.alarms_cw_overrides[alarm].namespace, value.namespace, "AWS/ECS")
           metric_name         = try(values.alarms_cw_overrides[alarm].metric_name, value.metric_name)
           threshold           = try(values.alarms_cw_overrides[alarm].threshold, value.threshold)
-          statistic           = try(values.alarms_cw_overrides[alarm].statistic, value.statistic)
-          extended_statistic  = try(values.alarms_cw_overrides[alarm].extended_statistic, value.extended_statistic)
+          statistic           = try(values.alarms_cw_overrides[alarm].statistic, value.statistic, null)
+          extended_statistic  = try(values.alarms_cw_overrides[alarm].extended_statistic, value.extended_statistic, null)
           period              = try(values.alarms_cw_overrides[alarm].period, value.period, 60)
           unit                = try(values.alarms_cw_overrides[alarm].unit, value.unit)
           treat_missing_data  = try(values.alarms_cw_overrides[alarm].treat_missing_data, "notBreaching")
@@ -85,13 +85,13 @@ locals {
       "${service_name}-${alarm}" => merge(
         value,
         {
-          alarm_name          = "${split("/", value.namespace)[1]}-${alarm}-${local.common_name}-${service_name}"
+          alarm_name          = "ECS-${alarm}-${local.common_name}-${service_name}"
           alarm_description   = "Service[${service_name}] ${value.description}"
           actions_enabled     = try(value.actions_enabled, true)
           comparison_operator = try(value.comparison_operator, "GreaterThanOrEqualToThreshold")
           datapoints_to_alarm = try(value.datapoints_to_alarm, 5)
           evaluation_periods  = try(value.evaluation_periods, 5)
-          namespace           = try(value.threshold, "AWS/ECS")
+          namespace           = try(value.namespace, "AWS/ECS")
           metric_name         = try(value.metric_name, null)
           threshold           = try(value.threshold, null)
           statistic           = try(value.statistic, null)
