@@ -11,8 +11,6 @@ locals {
       unit        = "Percent"
       metric_name = "CPUUtilization"
       statistic   = "Average"
-      namespace   = "AWS/ECS"
-      period      = 60
       alarms_tags = {
         "alarm-level" = "WARN"
       }
@@ -23,8 +21,6 @@ locals {
       unit        = "Percent"
       metric_name = "CPUUtilization"
       statistic   = "Average"
-      namespace   = "AWS/ECS"
-      period      = 60
       alarms_tags = {
         "alarm-level" = "CRIT"
       }
@@ -35,8 +31,6 @@ locals {
       unit        = "Percent"
       metric_name = "MemoryUtilization"
       statistic   = "Average"
-      namespace   = "AWS/ECS"
-      period      = 60
       alarms_tags = {
         "alarm-level" = "WARN"
       }
@@ -48,8 +42,6 @@ locals {
       unit        = "Percent"
       metric_name = "MemoryUtilization"
       statistic   = "Average"
-      namespace   = "AWS/ECS"
-      period      = 60
       alarms_tags = {
         "alarm-level" = "CRIT"
       }
@@ -62,19 +54,26 @@ locals {
       merge(
         value,
         {
-          alarm_name         = "${split("/", value.namespace)[1]}-${alarm}-${local.common_name}-${service_name}"
-          alarm_description  = "Service[${service_name}] ${value.description}"
-          actions_enabled    = try(values.alarms_cw_overrides[alarm].actions_enabled, true)
-          evaluation_periods = try(values.alarms_cw_overrides[alarm].evaluation_periods, 5)
-          threshold          = try(values.alarms_cw_overrides[alarm].threshold, value.threshold)
-          period             = try(values.alarms_cw_overrides[alarm].period, value.period)
-          treat_missing_data = try(values.alarms_cw_overrides[alarm].treat_missing_data, "notBreaching")
-          dimensions = {
+          alarm_name          = "${split("/", value.namespace)[1]}-${alarm}-${local.common_name}-${service_name}"
+          alarm_description   = "Service[${service_name}] ${value.description}"
+          actions_enabled     = try(values.alarms_cw_overrides[alarm].actions_enabled, true)
+          comparison_operator = try(values.alarms_cw_overrides[alarm].comparison_operator, value.comparison_operator, "GreaterThanOrEqualToThreshold")
+          datapoints_to_alarm = try(values.alarms_cw_overrides[alarm].datapoints_to_alarm, value.datapoints_to_alarm, 5)
+          evaluation_periods  = try(values.alarms_cw_overrides[alarm].evaluation_periods, value.evaluation_periods, 5)
+          namespace           = try(values.alarms_cw_overrides[alarm].threshold, value.threshold, "AWS/ECS")
+          metric_name         = try(values.alarms_cw_overrides[alarm].metric_name, value.metric_name)
+          threshold           = try(values.alarms_cw_overrides[alarm].threshold, value.threshold)
+          statistic           = try(values.alarms_cw_overrides[alarm].statistic, value.statistic)
+          extended_statistic  = try(values.alarms_cw_overrides[alarm].extended_statistic, value.extended_statistic)
+          period              = try(values.alarms_cw_overrides[alarm].period, value.period, 60)
+          unit                = try(values.alarms_cw_overrides[alarm].unit, value.unit)
+          treat_missing_data  = try(values.alarms_cw_overrides[alarm].treat_missing_data, "notBreaching")
+          dimensions = try(value.dimensions, {
             ClusterName = try(values.ecs_cluster_name, local.default_ecs_cluster_name)
             ServiceName = module.ecs_service["${service_name}"].name
-          }
-          ok_actions    = []
-          alarm_actions = []
+          })
+          ok_actions    = try(values.alarms_cw_overrides[alarm].ok_actions, value.ok_actions, [])
+          alarm_actions = try(values.alarms_cw_overrides[alarm].alarm_actions, value.alarm_actions, [])
           alarms_tags   = merge(try(values.alarms_cw_overrides[alarm].alarms_tags, value.alarms_tags), { "alarm-service-name" = "${local.common_name}-${service_name}" })
       }) if can(var.ecs_service_parameters) && var.ecs_service_parameters != {} && try(values.enable_alarms, false) && !contains(try(values.alarms_cw_disabled, []), alarm)
     }
@@ -86,19 +85,26 @@ locals {
       "${service_name}-${alarm}" => merge(
         value,
         {
-          alarm_name         = "${split("/", value.namespace)[1]}-${alarm}-${local.common_name}-${service_name}"
-          alarm_description  = "Service[${service_name}] ${value.description}"
-          actions_enabled    = try(value.actions_enabled, true)
-          evaluation_periods = try(value.evaluation_periods, 5)
-          threshold          = value.threshold
-          period             = value.period
-          treat_missing_data = try("${value.treat_missing_data}", "notBreaching")
-          dimensions = {
+          alarm_name          = "${split("/", value.namespace)[1]}-${alarm}-${local.common_name}-${service_name}"
+          alarm_description   = "Service[${service_name}] ${value.description}"
+          actions_enabled     = try(value.actions_enabled, true)
+          comparison_operator = try(value.comparison_operator, "GreaterThanOrEqualToThreshold")
+          datapoints_to_alarm = try(value.datapoints_to_alarm, 5)
+          evaluation_periods  = try(value.evaluation_periods, 5)
+          namespace           = try(value.threshold, "AWS/ECS")
+          metric_name         = try(value.metric_name, null)
+          threshold           = try(value.threshold, null)
+          statistic           = try(value.statistic, null)
+          extended_statistic  = try(value.extended_statistic, null)
+          period              = try(value.period, 60)
+          unit                = try(value.unit, null)
+          treat_missing_data  = try(value.treat_missing_data, "notBreaching")
+          dimensions = try(value.dimensions, {
             ClusterName = try(values.ecs_cluster_name, local.default_ecs_cluster_name)
             ServiceName = module.ecs_service["${service_name}"].name
-          }
-          ok_actions    = []
-          alarm_actions = []
+          })
+          ok_actions    = try(value.ok_actions, [])
+          alarm_actions = try(value.alarm_actions, [])
           alarms_tags   = merge(try(values.alarms_cw_overrides[alarm].alarms_tags, value.alarms_tags), { "alarm-service-name" = "${local.common_name}-${service_name}" })
         }
       ) if can(var.ecs_service_parameters) && var.ecs_service_parameters != {} && try(values.enable_alarms, false)
@@ -118,12 +124,15 @@ locals {
 /*----------------------------------------------------------------------*/
 
 locals {
-  enable_alarms_notifications = length(local.cw_alarms) > 0 && try(var.ecs_service_defaults.alarms_defaults.enable_alarms_notifications, true) ? 1 : 0
+  enable_alarms_sns_default = anytrue([
+    for _, alarm_value in local.cw_alarms :
+    length(alarm_value.ok_actions) == 0 || length(alarm_value.alarm_actions) == 0
+  ]) ? 1 : 0
 }
 
-data "aws_sns_topic" "cw_alarms_sns_topic_name" {
-  count = local.enable_alarms_notifications
-  name  = try(var.ecs_service_defaults.alarms_defaults.cw_alarms_sns_topic_name, "${local.default_sns_topic_name}")
+data "aws_sns_topic" "alarms_sns_topic_name" {
+  count = local.enable_alarms_sns_default
+  name  = local.default_sns_topic_name
 }
 
 /*----------------------------------------------------------------------*/
@@ -133,23 +142,24 @@ data "aws_sns_topic" "cw_alarms_sns_topic_name" {
 resource "aws_cloudwatch_metric_alarm" "cw_alarms" {
   for_each = nonsensitive(local.cw_alarms)
 
-  alarm_name          = try(each.value.alarm_name, var.ecs_service_defaults.alarms_defaults.alarm_name)
-  alarm_description   = try(each.value.alarm_description, var.ecs_service_defaults.alarms_defaults.alarm_description, null)
-  actions_enabled     = try(each.value.actions_enabled, var.ecs_service_defaults.alarms_defaults.actions_enabled, true)
-  comparison_operator = try(each.value.comparison_operator, var.ecs_service_defaults.alarms_defaults.comparison_operator, "GreaterThanOrEqualToThreshold")
-  evaluation_periods  = try(each.value.evaluation_periods, var.ecs_service_defaults.alarms_defaults.evaluation_period, 5)
-  threshold           = try(each.value.threshold, var.ecs_service_defaults.alarms_defaults.threshold, null)
-  period              = try(each.value.period, var.ecs_service_defaults.alarms_defaults.period, null)
-  unit                = try(each.value.unit, var.ecs_service_defaults.alarms_defaults.unit, null)
-  namespace           = try(each.value.namespace, var.ecs_service_defaults.alarms_defaults.namespace, null)
-  metric_name         = try(each.value.metric_name, var.ecs_service_defaults.alarms_defaults.metric_name, null)
-  statistic           = try(each.value.statistic, var.ecs_service_defaults.alarms_defaults.statistic, null)
-  extended_statistic  = try(each.value.extended_statistic, var.ecs_service_defaults.alarms_defaults.extended_statistic, null)
-  dimensions          = try(each.value.dimensions, var.ecs_service_defaults.alarms_defaults.dimensions, null)
-  treat_missing_data  = try(each.value.treat_missing_data, var.ecs_service_defaults.alarms_defaults.treat_missing_data, "notBreaching")
+  alarm_name          = each.value.alarm_name
+  alarm_description   = each.value.alarm_description
+  actions_enabled     = each.value.actions_enabled
+  comparison_operator = each.value.comparison_operator
+  evaluation_periods  = each.value.evaluation_periods
+  datapoints_to_alarm = each.value.datapoints_to_alarm
+  threshold           = each.value.threshold
+  period              = each.value.period
+  unit                = each.value.unit
+  namespace           = each.value.namespace
+  metric_name         = each.value.metric_name
+  statistic           = each.value.statistic
+  extended_statistic  = each.value.extended_statistic
+  dimensions          = each.value.dimensions
+  treat_missing_data  = each.value.treat_missing_data
 
-  alarm_actions = concat(try([data.aws_sns_topic.cw_alarms_sns_topic_name[0].arn], []), try(each.value.alarm_actions, var.ecs_service_defaults.alarms_defaults.alarm_actions, []))
-  ok_actions    = concat(try([data.aws_sns_topic.cw_alarms_sns_topic_name[0].arn], []), try(each.value.ok_actions, var.ecs_service_defaults.alarms_defaults.ok_actions, []))
+  alarm_actions = length(each.value.alarm_actions) == 0 ? [data.aws_sns_topic.alarms_sns_topic_name[0].arn] : each.value.alarm_actions
+  ok_actions    = length(each.value.ok_actions) == 0 ? [data.aws_sns_topic.alarms_sns_topic_name[0].arn] : each.value.ok_actions
 
   # conflicts with metric_name
   dynamic "metric_query" {
