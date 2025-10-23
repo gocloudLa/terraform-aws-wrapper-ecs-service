@@ -68,10 +68,10 @@ locals {
           period              = try(values.alarms_cw_overrides[alarm].period, value.period, 60)
           unit                = try(values.alarms_cw_overrides[alarm].unit, value.unit)
           treat_missing_data  = try(values.alarms_cw_overrides[alarm].treat_missing_data, "notBreaching")
-          dimensions = try(value.dimensions, {
+          dimensions = {
             ClusterName = try(values.ecs_cluster_name, local.default_ecs_cluster_name)
             ServiceName = module.ecs_service["${service_name}"].name
-          })
+          }
           ok_actions    = try(values.alarms_cw_overrides[alarm].ok_actions, value.ok_actions, [])
           alarm_actions = try(values.alarms_cw_overrides[alarm].alarm_actions, value.alarm_actions, [])
           alarms_tags   = merge(try(values.alarms_cw_overrides[alarm].alarms_tags, value.alarms_tags), { "alarm-service-name" = "${local.common_name}-${service_name}" })
