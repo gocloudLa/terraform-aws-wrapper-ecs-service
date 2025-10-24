@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.1.0](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/compare/v1.0.1...v1.1.0) (2025-10-12)
+
+
+### Features
+
+* **alarms:** add capacity unavailable alarm ([#4](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/issues/4)) ([3650695](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/commit/36506957de99b783439b8cfee1bfd2dae0f82cbb))
+
+
+### Bug Fixes
+
+* **deps:** bump terraform-aws-modules/ecr/aws from 3.0.1 to 3.1.0 in the all-terraform-dependencies group across 1 directory ([#6](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/issues/6)) ([c13d9ab](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/commit/c13d9ab7a0ddd783b5b4442c0f6c787180bb3769))
+
 ## [1.0.1](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/compare/v1.0.0...v1.0.1) (2025-09-18)
 
 
