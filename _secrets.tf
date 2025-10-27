@@ -21,7 +21,7 @@ locals {
 
 module "ssm_parameter" {
   source  = "terraform-aws-modules/ssm-parameter/aws"
-  version = "1.1.2"
+  version = "1.2.0"
 
   for_each = local.app_container_definition_secrets_create
 
