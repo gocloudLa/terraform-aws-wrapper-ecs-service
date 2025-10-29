@@ -632,8 +632,6 @@ module "wrapper_ecs_service" {
         #   unit        = "Percent"
         #   metric_name = "CPUUtilization"
         #   statistic   = "Average"
-        #   namespace   = "AWS/ECS"
-        #   period      = 60
         #   alarms_tags = {
         #     "alarm-level"   = "CRIT"
         #     "alarm-OU"      = "Paymets"
@@ -840,16 +838,4 @@ module "wrapper_ecs_service" {
       }
     }
   }
-  /*
-  ecs_service_defaults = {
-    alarms_defaults = {
-      # enable_alarms_notifications = true # Default: true
-      alarms_sns_topic_name = "dmc-prd-alerts" # Default: "gcl-dev-core-alerts / ${metadata.key.client}-${metadata.key.env}-${metadata.key.project}-alerts"
-      # alarm_actions = "dmc-prd-core-alerts"
-      # ok_actions = "dmc-prd-core-alerts"
-    }
-    eb_alarms_defaults = {
-      alarms_sns_topic_name = "dmc-prd-alerts" # Default: "gcl-dev-core-alerts / ${metadata.key.client}-${metadata.key.env}-${metadata.key.project}-alerts"
-    }
-  }*/
 }
