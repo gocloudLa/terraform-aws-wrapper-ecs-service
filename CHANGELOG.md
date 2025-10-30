@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.1](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/compare/v1.1.0...v1.1.1) (2025-10-30)
+
+
+### Bug Fixes
+
+* **ecs:** example capacity provider and change default ([#8](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/issues/8)) ([d1742b6](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/commit/d1742b64f143d3fbe7721fbe8460683636dd2782))
+* **ssm:** add overwrite = true ([#12](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/issues/12)) ([664e39b](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/commit/664e39bcd4f49428b65de5c44e4a9eb5fec6ace6))
+
 ## [1.1.0](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/compare/v1.0.1...v1.1.0) (2025-10-12)
 
 
