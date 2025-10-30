@@ -35,6 +35,7 @@ module "ssm_parameter" {
   key_id          = try(each.value.key_id, null)
   allowed_pattern = try(each.value.allowed_pattern, null)
   data_type       = try(each.value.data_type, null)
+  overwrite       = true
 
   tags = local.common_tags
 }
