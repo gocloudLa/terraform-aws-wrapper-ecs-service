@@ -9,11 +9,31 @@ module "wrapper_ecs_service" {
   metadata = local.metadata
 
   /*----------------------------------------------------------------------*/
+  /* ECS Service Defaults                                                 */
+  /*----------------------------------------------------------------------*/
+
+  # ecs_service_defaults = {
+  #
+  #   # Note: If a value is specified at the service level, that value will be used and the default will not be applied.
+  #    cw_alarms_defaults = {
+  #     # Enable CloudWatch alarms by default for all services
+  #     cw_enable_alarms = true
+  #     #
+  #     #     # Default OK and Alarm actions ARNs for alarm notifications
+  #     alarm_actions = ["arn:aws:sns:us-east-1:123456789012:example-alerts"]
+  #     ok_actions    = ["arn:aws:sns:us-east-1:123456789012:example-alerts"]
+  #     
+  #     # Disable specific CloudWatch alarms by default for all services.
+  #     alarms_cw_disabled = ["critical-CPUUtilization", "critical-MemoryUtilization"]
+  #    }
+  # }
+
+  /*----------------------------------------------------------------------*/
   /* ECS Service Parameters                                               */
   /*----------------------------------------------------------------------*/
 
   ecs_service_parameters = {
-
+    /*
     ExSimple = {
       # ecs_cluster_name                       = "dmc-prd-core-00"  # (Optional) Auto Discovery
       # vpc_name                               = "dmc-prd"          # (Optional) Auto Discovery
@@ -600,7 +620,7 @@ module "wrapper_ecs_service" {
         }
       }
     }
-
+*/
     ExAlarms = {
       # ecs_cluster_name                       = "dmc-prd-core-00"  # (Optional) Auto Discovery
       # vpc_name                               = "dmc-prd"          # (Optional) Auto Discovery
@@ -610,7 +630,8 @@ module "wrapper_ecs_service" {
       enable_execute_command = true
 
       # ALARMS CONFIGURATION
-      enable_alarms = true # Default: false
+      enable_alarms      = true                                                      # Default: false
+      alarms_cw_disabled = ["critical-CPUUtilization", "critical-MemoryUtilization"] # if you need to disable an cw alarm
 
       ##### CLOUDWATCH ALARMS 
       alarms_cw_overrides = {
@@ -622,8 +643,6 @@ module "wrapper_ecs_service" {
         #   "treat_missing_data" = "ignore"
         # }
       }
-
-      #alarms_cw_disabled = ["critical-CPUUtilization", "warning-CPUUtilization", "critical-MemoryUtilization", "warning-MemoryUtilization"] # if you need to disable an cw alarm
 
       alarms_cw_custom = {
         # "custom-CPUUtilization" = {
@@ -731,7 +750,7 @@ module "wrapper_ecs_service" {
             "port1" = {
               container_port = 80
               load_balancer = {
-                "alb1" = {
+                /*"alb1" = {
                   alb_name = "dmc-prd-example-ExExternal01"
                   listener_rules = {
                     "rule1" = {
@@ -744,7 +763,7 @@ module "wrapper_ecs_service" {
                       ]
                     }
                   }
-                }
+                }*/
               }
             }
           }

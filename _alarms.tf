@@ -47,7 +47,7 @@ locals {
       }
     }
   }
-  cw_alarms_tmp = merge([
+  cw_alarms_default_tmp = merge([
     for service_name, values in try(var.ecs_service_parameters, []) : {
       for alarm, value in try(local.cw_alarms_default, {}) :
       "${service_name}-${alarm}" =>
@@ -72,10 +72,10 @@ locals {
             ClusterName = try(values.ecs_cluster_name, local.default_ecs_cluster_name)
             ServiceName = module.ecs_service["${service_name}"].name
           }
-          ok_actions    = try(values.alarms_cw_overrides[alarm].ok_actions, value.ok_actions, [])
-          alarm_actions = try(values.alarms_cw_overrides[alarm].alarm_actions, value.alarm_actions, [])
+          ok_actions    = try(values.alarms_cw_overrides[alarm].ok_actions, var.ecs_service_defaults.cw_alarms_defaults.ok_actions, [])
+          alarm_actions = try(values.alarms_cw_overrides[alarm].alarm_actions, var.ecs_service_defaults.cw_alarms_defaults.alarm_actions, [])
           alarms_tags   = merge(try(values.alarms_cw_overrides[alarm].alarms_tags, value.alarms_tags), { "alarm-service-name" = "${local.common_name}-${service_name}" })
-      }) if can(var.ecs_service_parameters) && var.ecs_service_parameters != {} && try(values.enable_alarms, false) && !contains(try(values.alarms_cw_disabled, []), alarm)
+      }) if can(var.ecs_service_parameters) && var.ecs_service_parameters != {} && try(values.enable_alarms, var.ecs_service_defaults.cw_alarms_defaults.cw_enable_alarms, false) && !contains(concat(try(values.alarms_cw_disabled, var.ecs_service_defaults.cw_alarms_defaults.alarms_cw_disabled, [])), alarm)
     }
   ]...)
 
@@ -103,16 +103,16 @@ locals {
             ClusterName = try(values.ecs_cluster_name, local.default_ecs_cluster_name)
             ServiceName = module.ecs_service["${service_name}"].name
           })
-          ok_actions    = try(value.ok_actions, [])
-          alarm_actions = try(value.alarm_actions, [])
+          ok_actions    = try(value.ok_actions, var.ecs_service_defaults.cw_alarms_defaults.ok_actions, [])
+          alarm_actions = try(value.alarm_actions, var.ecs_service_defaults.cw_alarms_defaults.alarm_actions, [])
           alarms_tags   = merge(try(values.alarms_cw_overrides[alarm].alarms_tags, value.alarms_tags), { "alarm-service-name" = "${local.common_name}-${service_name}" })
         }
-      ) if can(var.ecs_service_parameters) && var.ecs_service_parameters != {} && try(values.enable_alarms, false)
+      ) if can(var.ecs_service_parameters) && var.ecs_service_parameters != {} && try(values.enable_alarms, try(var.ecs_service_defaults.cw_alarms_defaults.cw_enable_alarms, false))
     }
   ]...)
 
   cw_alarms = merge(
-    local.cw_alarms_tmp,
+    local.cw_alarms_default_tmp,
     local.cw_alarms_custom_tmp
   )
 
