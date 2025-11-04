@@ -14,17 +14,25 @@ module "wrapper_ecs_service" {
 
   # ecs_service_defaults = {
   #
+  #   # Enable alarms (both CloudWatch and EventBridge) for all services
+  #   enable_alarms = true # Default: false
+  #
   #   # Note: If a value is specified at the service level, that value will be used and the default will not be applied.
   #    cw_alarms_defaults = {
-  #     # Enable CloudWatch alarms by default for all services
-  #     cw_enable_alarms = true
-  #     #
-  #     #     # Default OK and Alarm actions ARNs for alarm notifications
+  #     # Default OK and Alarm actions ARNs for alarm notifications
   #     alarm_actions = ["arn:aws:sns:us-east-1:123456789012:example-alerts"]
   #     ok_actions    = ["arn:aws:sns:us-east-1:123456789012:example-alerts"]
   #     
   #     # Disable specific CloudWatch alarms by default for all services.
   #     alarms_cw_disabled = ["critical-CPUUtilization", "critical-MemoryUtilization"]
+  #    }
+  #
+  #    eb_alarms_defaults = {
+  #     # Disable specific EventBridge alarms by default for all services.
+  #     # alarms_eb_disabled = ["task-stopped", "capacity-unavailable"]
+  #
+  #     # Default SNS topic ARNs for EventBridge alarm notifications
+  #     # targets_sns = ["arn:aws:sns:us-east-1:123456789012:example-alerts"]
   #    }
   # }
 
@@ -629,11 +637,11 @@ module "wrapper_ecs_service" {
       enable_autoscaling     = false
       enable_execute_command = true
 
-      # ALARMS CONFIGURATION
-      enable_alarms      = true                                                      # Default: false
-      alarms_cw_disabled = ["critical-CPUUtilization", "critical-MemoryUtilization"] # if you need to disable an cw alarm
+      # ALARMS CONFIGURATION. Enables both CloudWatch and EventBridge alarms
+      enable_alarms      = true # Default: false
 
       ##### CLOUDWATCH ALARMS 
+      alarms_cw_disabled = ["critical-CPUUtilization", "critical-MemoryUtilization"] # if you need to disable an cw alarm
       alarms_cw_overrides = {
         # "warning-CPUUtilization" = {
         #   "actions_enabled"    = true

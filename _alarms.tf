@@ -75,7 +75,7 @@ locals {
           ok_actions    = try(values.alarms_cw_overrides[alarm].ok_actions, var.ecs_service_defaults.cw_alarms_defaults.ok_actions, [])
           alarm_actions = try(values.alarms_cw_overrides[alarm].alarm_actions, var.ecs_service_defaults.cw_alarms_defaults.alarm_actions, [])
           alarms_tags   = merge(try(values.alarms_cw_overrides[alarm].alarms_tags, value.alarms_tags), { "alarm-service-name" = "${local.common_name}-${service_name}" })
-      }) if can(var.ecs_service_parameters) && var.ecs_service_parameters != {} && try(values.enable_alarms, var.ecs_service_defaults.cw_alarms_defaults.cw_enable_alarms, false) && !contains(concat(try(values.alarms_cw_disabled, var.ecs_service_defaults.cw_alarms_defaults.alarms_cw_disabled, [])), alarm)
+      }) if can(var.ecs_service_parameters) && var.ecs_service_parameters != {} && try(values.enable_alarms, var.ecs_service_defaults.enable_alarms, false) && !contains(try(values.alarms_cw_disabled, var.ecs_service_defaults.cw_alarms_defaults.alarms_cw_disabled, []), alarm)
     }
   ]...)
 
@@ -107,7 +107,7 @@ locals {
           alarm_actions = try(value.alarm_actions, var.ecs_service_defaults.cw_alarms_defaults.alarm_actions, [])
           alarms_tags   = merge(try(values.alarms_cw_overrides[alarm].alarms_tags, value.alarms_tags), { "alarm-service-name" = "${local.common_name}-${service_name}" })
         }
-      ) if can(var.ecs_service_parameters) && var.ecs_service_parameters != {} && try(values.enable_alarms, try(var.ecs_service_defaults.cw_alarms_defaults.cw_enable_alarms, false))
+      ) if can(var.ecs_service_parameters) && var.ecs_service_parameters != {} && try(values.enable_alarms, var.ecs_service_defaults.enable_alarms, false)
     }
   ]...)
 
@@ -247,14 +247,14 @@ locals {
                 }
               )
             )
-            targets_sns         = try(values.alarms_eb_overrides[alarm].targets_sns, value.targets_sns, [])
+            targets_sns         = try(values.alarms_eb_overrides[alarm].targets_sns, var.ecs_service_defaults.eb_alarms_defaults.targets_sns, [])
             schedule_expression = try(values.alarms_eb_overrides[alarm].schedule_expression, value.schedule_expression, null)
             force_destroy       = try(values.alarms_eb_overrides[alarm].force_destroy, value.force_destroy, false)
             role_arn            = try(values.alarms_eb_overrides[alarm].role_arn, value.role_arn, null)
             state               = try(values.alarms_eb_overrides[alarm].state, value.state, null)
           }
         )
-      } if can(var.ecs_service_parameters) && var.ecs_service_parameters != {} && try(values.enable_alarms, false) && !contains(try(values.alarms_eb_disabled, []), alarm)
+      } if can(var.ecs_service_parameters) && var.ecs_service_parameters != {} && try(values.enable_alarms, var.ecs_service_defaults.enable_alarms, false) && !contains(try(values.alarms_eb_disabled, var.ecs_service_defaults.eb_alarms_defaults.alarms_eb_disabled, []), alarm)
     ]
   ]
   eb_alarms_default_parameters = merge(flatten(local.eb_alarms_default_parameters_tmp)...)
@@ -282,14 +282,14 @@ locals {
                 }
               )
             )
-            targets_sns         = try(value.targets_sns, [])
+            targets_sns         = try(value.targets_sns, var.ecs_service_defaults.eb_alarms_defaults.targets_sns, [])
             schedule_expression = try(value.schedule_expression, null)
             force_destroy       = try(value.force_destroy, false)
             role_arn            = try(value.role_arn, null)
             state               = try(value.state, null)
           }
         )
-      } if can(var.ecs_service_parameters) && var.ecs_service_parameters != {} && try(values.enable_alarms, false)
+      } if can(var.ecs_service_parameters) && var.ecs_service_parameters != {} && try(values.enable_alarms, var.ecs_service_defaults.enable_alarms, false)
     ]
   ]
   eb_alarms_custom = merge(flatten(local.eb_alarms_custom_tmp)...)
