@@ -20,11 +20,11 @@ module "wrapper_ecs_service" {
   #   # Note: If a value is specified at the service level, that value will be used and the default will not be applied.
   #    cw_alarms_defaults = {
   #     # Default OK and Alarm actions ARNs for alarm notifications
-  #     alarm_actions = ["arn:aws:sns:us-east-1:123456789012:example-alerts"]
-  #     ok_actions    = ["arn:aws:sns:us-east-1:123456789012:example-alerts"]
-  #     
+  #     #alarm_actions = ["arn:aws:sns:us-east-1:123456789012:example-alerts"]
+  #     #ok_actions    = ["arn:aws:sns:us-east-1:123456789012:example-alerts"]
+  #
   #     # Disable specific CloudWatch alarms by default for all services.
-  #     alarms_cw_disabled = ["critical-CPUUtilization", "critical-MemoryUtilization"]
+  #     #alarms_cw_disabled = ["critical-CPUUtilization", "critical-MemoryUtilization"]
   #    }
   #
   #    eb_alarms_defaults = {
@@ -32,7 +32,7 @@ module "wrapper_ecs_service" {
   #     # alarms_eb_disabled = ["task-stopped", "capacity-unavailable"]
   #
   #     # Default SNS topic ARNs for EventBridge alarm notifications
-  #     # targets_sns = ["arn:aws:sns:us-east-1:123456789012:example-alerts"]
+  #     # targets_sns = ["arn:sns-1"]
   #    }
   # }
 
@@ -638,7 +638,7 @@ module "wrapper_ecs_service" {
       enable_execute_command = true
 
       # ALARMS CONFIGURATION. Enables both CloudWatch and EventBridge alarms
-      enable_alarms      = true # Default: false
+      enable_alarms = true # Default: false
 
       ##### CLOUDWATCH ALARMS 
       alarms_cw_disabled = ["critical-CPUUtilization", "critical-MemoryUtilization"] # if you need to disable an cw alarm
@@ -649,6 +649,8 @@ module "wrapper_ecs_service" {
         #   "threshold"          = 30
         #   "period"             = 180
         #   "treat_missing_data" = "ignore"
+        #   "ok_actions"         = ["arn:sns-1"]
+        #   "alarm_actions"      = ["arn:sns-1"]
         # }
       }
 
@@ -679,7 +681,7 @@ module "wrapper_ecs_service" {
       alarms_eb_overrides = {
         #"task-stopped" = {
         #description = "ECS Task Restart - override"
-        #targets_sns = ["arn:sns-1", "arn:sns-2"] # optional. default: sns-account-default
+        #targets_sns = ["arn:sns-1"] # optional. default: sns-account-default
         #   event_bus_name = "event-bus-custom" 
         #   event_pattern = jsonencode({
         #     "source" : ["aws.ecs"],
