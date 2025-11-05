@@ -9,6 +9,34 @@ module "wrapper_ecs_service" {
   metadata = local.metadata
 
   /*----------------------------------------------------------------------*/
+  /* ECS Service Defaults                                                 */
+  /*----------------------------------------------------------------------*/
+
+  # ecs_service_defaults = {
+  #
+  #   # Enable alarms (both CloudWatch and EventBridge) for all services
+  #   enable_alarms = true # Default: false
+  #
+  #   # Note: If a value is specified at the service level, that value will be used and the default will not be applied.
+  #    cw_alarms_defaults = {
+  #     # Default OK and Alarm actions ARNs for alarm notifications
+  #     #alarm_actions = ["arn:aws:sns:us-east-1:123456789012:example-alerts"]
+  #     #ok_actions    = ["arn:aws:sns:us-east-1:123456789012:example-alerts"]
+  #
+  #     # Disable specific CloudWatch alarms by default for all services.
+  #     #alarms_cw_disabled = ["critical-CPUUtilization", "critical-MemoryUtilization"]
+  #    }
+  #
+  #    eb_alarms_defaults = {
+  #     # Disable specific EventBridge alarms by default for all services.
+  #     # alarms_eb_disabled = ["task-stopped", "capacity-unavailable"]
+  #
+  #     # Default SNS topic ARNs for EventBridge alarm notifications
+  #     # targets_sns = ["arn:sns-1"]
+  #    }
+  # }
+
+  /*----------------------------------------------------------------------*/
   /* ECS Service Parameters                                               */
   /*----------------------------------------------------------------------*/
 
@@ -609,10 +637,11 @@ module "wrapper_ecs_service" {
       enable_autoscaling     = false
       enable_execute_command = true
 
-      # ALARMS CONFIGURATION
+      # ALARMS CONFIGURATION. Enables both CloudWatch and EventBridge alarms
       enable_alarms = true # Default: false
 
       ##### CLOUDWATCH ALARMS 
+      alarms_cw_disabled = ["critical-CPUUtilization", "critical-MemoryUtilization"] # if you need to disable an cw alarm
       alarms_cw_overrides = {
         # "warning-CPUUtilization" = {
         #   "actions_enabled"    = true
@@ -620,10 +649,10 @@ module "wrapper_ecs_service" {
         #   "threshold"          = 30
         #   "period"             = 180
         #   "treat_missing_data" = "ignore"
+        #   "ok_actions"         = ["arn:sns-1"]
+        #   "alarm_actions"      = ["arn:sns-1"]
         # }
       }
-
-      #alarms_cw_disabled = ["critical-CPUUtilization", "warning-CPUUtilization", "critical-MemoryUtilization", "warning-MemoryUtilization"] # if you need to disable an cw alarm
 
       alarms_cw_custom = {
         # "custom-CPUUtilization" = {
@@ -632,8 +661,6 @@ module "wrapper_ecs_service" {
         #   unit        = "Percent"
         #   metric_name = "CPUUtilization"
         #   statistic   = "Average"
-        #   namespace   = "AWS/ECS"
-        #   period      = 60
         #   alarms_tags = {
         #     "alarm-level"   = "CRIT"
         #     "alarm-OU"      = "Paymets"
@@ -654,7 +681,7 @@ module "wrapper_ecs_service" {
       alarms_eb_overrides = {
         #"task-stopped" = {
         #description = "ECS Task Restart - override"
-        #targets_sns = ["arn:sns-1", "arn:sns-2"] # optional. default: sns-account-default
+        #targets_sns = ["arn:sns-1"] # optional. default: sns-account-default
         #   event_bus_name = "event-bus-custom" 
         #   event_pattern = jsonencode({
         #     "source" : ["aws.ecs"],
@@ -733,7 +760,7 @@ module "wrapper_ecs_service" {
             "port1" = {
               container_port = 80
               load_balancer = {
-                "alb1" = {
+                /*"alb1" = {
                   alb_name = "dmc-prd-example-ExExternal01"
                   listener_rules = {
                     "rule1" = {
@@ -746,7 +773,7 @@ module "wrapper_ecs_service" {
                       ]
                     }
                   }
-                }
+                }*/
               }
             }
           }
@@ -840,16 +867,4 @@ module "wrapper_ecs_service" {
       }
     }
   }
-  /*
-  ecs_service_defaults = {
-    alarms_defaults = {
-      # enable_alarms_notifications = true # Default: true
-      alarms_sns_topic_name = "dmc-prd-alerts" # Default: "gcl-dev-core-alerts / ${metadata.key.client}-${metadata.key.env}-${metadata.key.project}-alerts"
-      # alarm_actions = "dmc-prd-core-alerts"
-      # ok_actions = "dmc-prd-core-alerts"
-    }
-    eb_alarms_defaults = {
-      alarms_sns_topic_name = "dmc-prd-alerts" # Default: "gcl-dev-core-alerts / ${metadata.key.client}-${metadata.key.env}-${metadata.key.project}-alerts"
-    }
-  }*/
 }
