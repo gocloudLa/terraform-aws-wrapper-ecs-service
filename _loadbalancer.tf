@@ -18,16 +18,12 @@ locals {
               "port_values"    = port_values
               "alb_values"     = alb_values
             }
-          }
-        ]
-        if can(port_values.load_balancer)
+          } if try(alb_values.target_group_attach, null) == null
+        ] if can(port_values.load_balancer)
       ]
     ]
   ]
-  create_target_groups = {
-    for k, v in merge(flatten(local.create_target_groups_tmp)...) :
-    k => v if try(v.alb_values.target_group_attach, null) == null
-  }
+  create_target_groups = merge(flatten(local.create_target_groups_tmp)...)
 
   create_listener_rules_tmp = [
     for service_name, service_config in var.ecs_service_parameters :
@@ -53,9 +49,8 @@ locals {
                 })
               }
             }
-          ]
-        ]
-        if can(port_values.load_balancer)
+          ] if try(alb_values.target_group_attach, null) == null
+        ] if can(port_values.load_balancer)
       ]
     ]
   ]
