@@ -41,7 +41,7 @@ module "wrapper_ecs_service" {
   /*----------------------------------------------------------------------*/
 
   ecs_service_parameters = {
-
+    /*
     ExSimple = {
       # ecs_cluster_name                       = "dmc-prd-core-00"  # (Optional) Auto Discovery
       # vpc_name                               = "dmc-prd"          # (Optional) Auto Discovery
@@ -888,7 +888,7 @@ module "wrapper_ecs_service" {
                   target_group_attach = "dmc-prd-example-nlb-tcp-80"
                 }
                 "alb1" = {
-                  alb_name                 = "dmc-prd-core-external-00"
+                  alb_name                 = "dmc-prd-example-ExExternal01"
                   target_group_custom_name = "custom-name" # Default: "${local.common_name}-${service_name}-${port_values.container_port}-${alb_key}"
                   alb_listener_port        = 443
                   deregistration_delay     = 300
@@ -921,6 +921,6 @@ module "wrapper_ecs_service" {
           }
         }
       }
-    }
+    }*/
   }
 }
