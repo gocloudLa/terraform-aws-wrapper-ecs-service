@@ -1000,7 +1000,6 @@ ecs_service_parameters = {
                 alb_name            = "dmc-prd-example-NlbExample01"
                 target_group_attach = "dmc-prd-example-nlb-tcp-80" # Must exist beforehand
               }
-              }
             }
           }
         }
