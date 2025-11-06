@@ -972,7 +972,6 @@ Enables ECS services to attach containers directly to existing **Network Load Ba
 **Use Case:**
 - Integrate existing ECS services into pre-provisioned network infrastructures.
 - Attach multiple containers to different target groups across NLB.
-- Configure listener rules, health checks, and custom target group names.
 
 **Key Details:**
 - Target groups must be **created beforehand** (the module only attaches to them).
@@ -1001,17 +1000,6 @@ ecs_service_parameters = {
                 alb_name            = "dmc-prd-example-NlbExample01"
                 target_group_attach = "dmc-prd-example-nlb-tcp-80" # Must exist beforehand
               }
-                listener_rules = {
-                  "rule1" = {
-                    # priority = 10
-                    # actions  = [{ type = "forward" }] # Default Action
-                    conditions = [
-                      {
-                        host_headers = ["ExNlbAttach.${local.zone_public}"]
-                      }
-                    ]
-                  }
-                }
               }
             }
           }
