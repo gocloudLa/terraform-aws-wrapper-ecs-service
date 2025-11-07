@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.2.0](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/compare/v1.1.0...v1.2.0) (2025-11-07)
+
+
+### Features
+
+* **ecs:** add nlb attach ([#13](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/issues/13)) ([a0954a6](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/commit/a0954a64a232c8b56aa75187856f4f8d94573cc8))
+
+
+### Bug Fixes
+
+* **alarms:** refactor alarm creations ([#9](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/issues/9)) ([415b849](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/commit/415b849f567a92cb489812361057c404ebc8e3d5))
+* **ecs:** example capacity provider and change default ([#8](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/issues/8)) ([d1742b6](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/commit/d1742b64f143d3fbe7721fbe8460683636dd2782))
+* **ecs:** example comment ([#14](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/issues/14)) ([00971c1](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/commit/00971c19a8b60407093ba7652db9a70a4d205164))
+* **ssm:** add overwrite = true ([#12](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/issues/12)) ([664e39b](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/commit/664e39bcd4f49428b65de5c44e4a9eb5fec6ace6))
+
 ## [1.1.0](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/compare/v1.0.1...v1.1.0) (2025-10-12)
 
 
