@@ -41,7 +41,7 @@ module "wrapper_ecs_service" {
   /*----------------------------------------------------------------------*/
 
   ecs_service_parameters = {
-    /*
+    
     ExSimple = {
       # ecs_cluster_name                       = "dmc-prd-core-00"  # (Optional) Auto Discovery
       # vpc_name                               = "dmc-prd"          # (Optional) Auto Discovery
@@ -921,6 +921,6 @@ module "wrapper_ecs_service" {
           }
         }
       }
-    }*/
+    }
   }
 }
