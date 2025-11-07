@@ -900,6 +900,50 @@ features:
               }
             }
           }
+  - icon: 🌐
+    title: NLB (Network Load Balancing) integration
+    short_description: Attach ECS services to existing Network Load Balancer target groups
+    long_description: |
+      Enables ECS services to attach containers directly to existing **Network Load Balancer (NLB)** target groups.<br/><br/>
+
+      **Use Case:**
+      - Integrate existing ECS services into pre-provisioned network infrastructures.
+      - Attach multiple containers to different target groups across NLB.
+
+      **Key Details:**
+      - Target groups must be **created beforehand** (the module only attaches to them).
+
+    examples:
+      - title: Configuration Code
+        code: |
+          ```hcl
+          ecs_service_parameters = {
+            ExNlbAttach = {
+              enable_autoscaling     = false
+              enable_execute_command = true
+
+              containers = {
+                app = {
+                  image                 = "public.ecr.aws/docker/library/nginx:latest"
+                  create_ecr_repository = false
+
+                  ports = {
+                    "port1" = {
+                      container_port = 80
+
+                      load_balancer = {
+                        # Attach to an existing Network Load Balancer target group
+                        "nlb1" = {
+                          alb_name            = "dmc-prd-example-NlbExample01"
+                          target_group_attach = "dmc-prd-example-nlb-tcp-80" # Must exist beforehand
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
           ```
 important_notes: ""
 input_table: |

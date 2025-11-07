@@ -33,6 +33,8 @@ This module provides enterprise-grade features including automated load balancer
 
 - 🔍 [ECR Registry Scanning & Replication](#ecr-registry-scanning-&-replication) - Advanced ECR registry scanning and cross-region replication capabilities
 
+- 🌐 [NLB (Network Load Balancing) integration](#nlb-(network-load-balancing)-integration) - Attach ECS services to existing Network Load Balancer target groups
+
 
 
 ### 🔗 External Modules
@@ -955,6 +957,52 @@ ecs_service_parameters = {
         map_environment = {}
         map_secrets     = {}
         mount_points    = []
+      }
+    }
+  }
+}
+
+
+</details>
+
+
+### NLB (Network Load Balancing) integration
+Enables ECS services to attach containers directly to existing **Network Load Balancer (NLB)** target groups.<br/><br/>
+
+**Use Case:**
+- Integrate existing ECS services into pre-provisioned network infrastructures.
+- Attach multiple containers to different target groups across NLB.
+
+**Key Details:**
+- Target groups must be **created beforehand** (the module only attaches to them).
+
+
+<details><summary>Configuration Code</summary>
+
+```hcl
+ecs_service_parameters = {
+  ExNlbAttach = {
+    enable_autoscaling     = false
+    enable_execute_command = true
+
+    containers = {
+      app = {
+        image                 = "public.ecr.aws/docker/library/nginx:latest"
+        create_ecr_repository = false
+
+        ports = {
+          "port1" = {
+            container_port = 80
+
+            load_balancer = {
+              # Attach to an existing Network Load Balancer target group
+              "nlb1" = {
+                alb_name            = "dmc-prd-example-NlbExample01"
+                target_group_attach = "dmc-prd-example-nlb-tcp-80" # Must exist beforehand
+              }
+            }
+          }
+        }
       }
     }
   }

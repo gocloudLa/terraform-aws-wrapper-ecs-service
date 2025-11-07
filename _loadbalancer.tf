@@ -18,9 +18,8 @@ locals {
               "port_values"    = port_values
               "alb_values"     = alb_values
             }
-          }
-        ]
-        if can(port_values.load_balancer)
+          } if try(alb_values.target_group_attach, null) == null
+        ] if can(port_values.load_balancer)
       ]
     ]
   ]
@@ -50,9 +49,8 @@ locals {
                 })
               }
             }
-          ]
-        ]
-        if can(port_values.load_balancer)
+          ] if try(alb_values.target_group_attach, null) == null
+        ] if can(port_values.load_balancer)
       ]
     ]
   ]
@@ -62,6 +60,29 @@ locals {
 #   value = local.create_listener_rules
 # }
 
+locals {
+  # Structure for handling cases where an existing target group is provided (such as a pre-created NLB/ALB target group).
+  # When a target_group_attach is specified in the configuration, this structure is assembled to attach to that existing target group
+  target_groups_attach_tmp = [
+    for service_name, service_config in var.ecs_service_parameters : [
+      for container_name, container_config in service_config.containers : [
+        for port_key, port_values in try(container_config.ports, {}) : [
+          for alb_key, alb_values in try(port_values.load_balancer, {}) : {
+            "${service_name}-${container_name}-${port_key}-${alb_key}" = {
+              target_group_name = alb_values.target_group_attach
+              service_name      = service_name
+              container_name    = container_name
+              port_key          = port_key
+              alb_key           = alb_key
+            }
+          } if try(alb_values.target_group_attach, null) != null
+        ]
+      ]
+    ]
+  ]
+
+  target_groups_attach = merge(flatten(local.target_groups_attach_tmp)...)
+}
 
 locals {
   # Similar al del security group
@@ -74,7 +95,7 @@ locals {
           [
             for alb_key, lb_config in try(port_values.load_balancer, {}) : {
               "custom_key"       = "${service_key}-${container_key}-${port_key}-${alb_key}"
-              "target_group_arn" = aws_lb_target_group.this["${service_key}-${container_key}-${port_key}-${alb_key}"].arn
+              "target_group_arn" = try(lb_config.target_group_attach, null) != null ? data.aws_lb_target_group.attach["${service_key}-${container_key}-${port_key}-${alb_key}"].arn : aws_lb_target_group.this["${service_key}-${container_key}-${port_key}-${alb_key}"].arn
               "container_name"   = "${container_key}"
               "container_port"   = try(port_values["host_port"], port_values["container_port"])
             }
@@ -134,6 +155,12 @@ resource "aws_lb_target_group" "this" {
 data "aws_lb" "this" {
   for_each = local.create_target_groups
   name     = try(each.value.alb_name, "${local.common_name}-internal-00")
+}
+
+data "aws_lb_target_group" "attach" {
+  for_each = local.target_groups_attach
+
+  name = each.value.target_group_name
 }
 
 data "aws_lb_listener" "this" {

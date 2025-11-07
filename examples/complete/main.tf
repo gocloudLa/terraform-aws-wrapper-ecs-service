@@ -41,7 +41,7 @@ module "wrapper_ecs_service" {
   /*----------------------------------------------------------------------*/
 
   ecs_service_parameters = {
-
+    /*
     ExSimple = {
       # ecs_cluster_name                       = "dmc-prd-core-00"  # (Optional) Auto Discovery
       # vpc_name                               = "dmc-prd"          # (Optional) Auto Discovery
@@ -760,7 +760,7 @@ module "wrapper_ecs_service" {
             "port1" = {
               container_port = 80
               load_balancer = {
-                /*"alb1" = {
+                "alb1" = {
                   alb_name = "dmc-prd-example-ExExternal01"
                   listener_rules = {
                     "rule1" = {
@@ -773,7 +773,7 @@ module "wrapper_ecs_service" {
                       ]
                     }
                   }
-                }*/
+                }
               }
             }
           }
@@ -866,5 +866,61 @@ module "wrapper_ecs_service" {
         }
       }
     }
+
+    ExNlbAttach = {
+      # ecs_cluster_name                       = "dmc-prd-core-00"
+      # vpc_name                               = "dmc-prd"
+      # subnet_name                            = "dmc-prd-private*"
+      enable_autoscaling = false
+
+      enable_execute_command = true
+
+      containers = {
+        app = {
+          image                 = "public.ecr.aws/docker/library/nginx:latest"
+          create_ecr_repository = false
+          ports = {
+            "port1" = {
+              container_port = 80
+              load_balancer = {
+                "nlb1" = {
+                  alb_name            = "dmc-prd-example-NlbExample01"
+                  target_group_attach = "dmc-prd-example-nlb-tcp-80"
+                }
+                "alb1" = {
+                  alb_name                 = "dmc-prd-example-ExExternal01"
+                  target_group_custom_name = "custom-name" # Default: "${local.common_name}-${service_name}-${port_values.container_port}-${alb_key}"
+                  alb_listener_port        = 443
+                  deregistration_delay     = 300
+                  slow_start               = 30
+                  health_check = {
+                    # # Default Values
+                    # path                = "/"
+                    # port                = "traffic-port"
+                    # protocol            = "HTTP"
+                    # matcher             = 200
+                    # interval            = 30
+                    # timeout             = 5
+                    # healthy_threshold   = 3
+                    # unhealthy_threshold = 3
+                  }
+                  listener_rules = {
+                    "rule1" = {
+                      # priority          = 10
+                      # actions = [{ type = "forward" }] # Default Action
+                      conditions = [
+                        {
+                          host_headers = ["ExNlbAttach.${local.zone_public}"]
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }*/
   }
 }
