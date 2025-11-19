@@ -110,9 +110,12 @@ locals {
   load_balancer_calculated = {
     for service_key, service_config in local.load_balancer_calculated_tmp2 :
     service_key => merge([
-      for container_key, container in service_config : {
-        for rule_key, rule_config in container[0] : rule_config.custom_key => rule_config
-      }
+      for container_key, container in service_config :
+      merge([
+        for port_list in container : {
+          for rule_config in port_list : rule_config.custom_key => rule_config
+        }
+      ]...)
     ]...)
   }
 }

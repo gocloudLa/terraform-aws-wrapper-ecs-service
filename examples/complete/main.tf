@@ -922,5 +922,110 @@ module "wrapper_ecs_service" {
         }
       }
     }
+    ExMultiPortLb = {
+      # ecs_cluster_name                       = "dmc-prd-core-00"
+      # vpc_name                               = "dmc-prd"
+      # subnet_name                            = "dmc-prd-private*"
+      enable_autoscaling = false
+
+      enable_execute_command = true
+
+      containers = {
+        app = {
+          image                 = "public.ecr.aws/docker/library/nginx:latest"
+          create_ecr_repository = false
+          ports = {
+            # Multi Port configuration por Applications Load Balancers (ALB)
+            "port1" = {
+              container_port = 80
+              load_balancer = {
+                "alb1" = {
+                  alb_name                 = "dmc-prd-example-ExExternal01"
+                  target_group_custom_name = "custom-name" # Default: "${local.common_name}-${service_name}-${port_values.container_port}-${alb_key}"
+                  alb_listener_port        = 443
+                  deregistration_delay     = 300
+                  slow_start               = 30
+                  health_check = {
+                    # # Default Values
+                    # path                = "/"
+                    # port                = "traffic-port"
+                    # protocol            = "HTTP"
+                    # matcher             = 200
+                    # interval            = 30
+                    # timeout             = 5
+                    # healthy_threshold   = 3
+                    # unhealthy_threshold = 3
+                  }
+                  listener_rules = {
+                    "rule1" = {
+                      # priority          = 10
+                      # actions = [{ type = "forward" }] # Default Action
+                      conditions = [
+                        {
+                          host_headers = ["ExMultiPortLb.${local.zone_public}"]
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+            "port2" = {
+              container_port = 88
+              load_balancer = {
+                "alb2" = {
+                  alb_name                 = "dmc-prd-example-ExExternal01" # Can be another LB
+                  target_group_custom_name = "custom-name-2"                # Default: "${local.common_name}-${service_name}-${port_values.container_port}-${alb_key}"
+                  alb_listener_port        = 443
+                  deregistration_delay     = 300
+                  slow_start               = 30
+                  health_check = {
+                    # # Default Values
+                    # path                = "/"
+                    # port                = "traffic-port"
+                    # protocol            = "HTTP"
+                    # matcher             = 200
+                    # interval            = 30
+                    # timeout             = 5
+                    # healthy_threshold   = 3
+                    # unhealthy_threshold = 3
+                  }
+                  listener_rules = {
+                    "rule1" = {
+                      # priority          = 10
+                      # actions = [{ type = "forward" }] # Default Action
+                      conditions = [
+                        {
+                          host_headers = ["ExMultiPortLb2.${local.zone_public}"]
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+            # Multi Port configuration por Network Load Balancers (NLB)
+            "nlb-tcp" = {
+              container_port = 27000
+              load_balancer = {
+                "tcp" = {
+                  alb_name            = "dmc-prd-example-NlbExample01"
+                  target_group_attach = "dmc-prd-example-nlb-tcp-27000"
+                }
+              }
+            }
+            "nlb-udp" = {
+              container_port = 27001
+              load_balancer = {
+                "udp" = {
+                  alb_name            = "dmc-prd-example-NlbExample01"
+                  target_group_attach = "dmc-prd-example-nlb-udp-27001"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }
