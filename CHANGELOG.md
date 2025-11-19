@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/compare/v1.2.0...v1.3.0) (2025-11-19)
+
+
+### Features
+
+* **module:** add multi port support in lb ecs services ([#16](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/issues/16)) ([3d85c46](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/commit/3d85c469a784ecb04537cc5a4aa242f06badfc60))
+
 ## [1.2.0](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/compare/v1.1.0...v1.2.0) (2025-11-07)
 
 
