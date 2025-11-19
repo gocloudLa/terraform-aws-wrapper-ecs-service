@@ -883,6 +883,10 @@ module "wrapper_ecs_service" {
             "port1" = {
               container_port = 80
               load_balancer = {
+                "nlb1" = {
+                  alb_name            = "dmc-prd-example-NlbExample01"
+                  target_group_attach = "dmc-prd-example-nlb-tcp-80"
+                }
                 "alb1" = {
                   alb_name                 = "dmc-prd-example-ExExternal01"
                   target_group_custom_name = "custom-name" # Default: "${local.common_name}-${service_name}-${port_values.container_port}-${alb_key}"
@@ -918,7 +922,7 @@ module "wrapper_ecs_service" {
         }
       }
     }
-     ExMultiPortLb = {
+    ExMultiPortLb = {
       # ecs_cluster_name                       = "dmc-prd-core-00"
       # vpc_name                               = "dmc-prd"
       # subnet_name                            = "dmc-prd-private*"
@@ -971,7 +975,7 @@ module "wrapper_ecs_service" {
               load_balancer = {
                 "alb2" = {
                   alb_name                 = "dmc-prd-example-ExExternal01" # Can be another LB
-                  target_group_custom_name = "custom-name-2" # Default: "${local.common_name}-${service_name}-${port_values.container_port}-${alb_key}"
+                  target_group_custom_name = "custom-name-2"                # Default: "${local.common_name}-${service_name}-${port_values.container_port}-${alb_key}"
                   alb_listener_port        = 443
                   deregistration_delay     = 300
                   slow_start               = 30
@@ -1005,8 +1009,8 @@ module "wrapper_ecs_service" {
               container_port = 27000
               load_balancer = {
                 "tcp" = {
-                  alb_name              = "dmc-prd-example-NlbExample01"
-                  target_group_attach   = "dmc-prd-example-nlb-tcp-27000"
+                  alb_name            = "dmc-prd-example-NlbExample01"
+                  target_group_attach = "dmc-prd-example-nlb-tcp-27000"
                 }
               }
             }
@@ -1014,8 +1018,8 @@ module "wrapper_ecs_service" {
               container_port = 27001
               load_balancer = {
                 "udp" = {
-                  alb_name              = "dmc-prd-example-NlbExample01"
-                  target_group_attach   = "dmc-prd-example-nlb-udp-27001"
+                  alb_name            = "dmc-prd-example-NlbExample01"
+                  target_group_attach = "dmc-prd-example-nlb-udp-27001"
                 }
               }
             }
