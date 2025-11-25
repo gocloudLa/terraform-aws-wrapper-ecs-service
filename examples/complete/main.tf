@@ -91,9 +91,7 @@ module "wrapper_ecs_service" {
               #cidr_blocks    = [""]  # Default: [vpc_cidr]
               load_balancer = {
                 "alb1" = {
-                  alb_name = "dmc-prd-example-ExExternal01"
-                  #    #if you want set a target group custom name
-                  #    target_group_custom_name = "${local.common_name}-ExSimpleEcr"
+                  alb_name = "dmc-lab-example-internal-00"
                   listener_rules = {
                     "rule1" = {
                       #        # priority          = 10
@@ -147,7 +145,7 @@ module "wrapper_ecs_service" {
               container_port = 80
               load_balancer = {
                 "alb1" = {
-                  alb_name = "dmc-prd-example-ExExternal01"
+                  alb_name = "dmc-lab-example-internal-00"
                   listener_rules = {
                     "rule1" = {
                       # priority          = 10
@@ -207,7 +205,7 @@ module "wrapper_ecs_service" {
               container_port = 80
               load_balancer = {
                 "alb1" = {
-                  alb_name = "dmc-prd-example-ExExternal01"
+                  alb_name = "dmc-lab-example-internal-00"
                   listener_rules = {
                     "rule1" = {
                       # priority          = 10
@@ -269,17 +267,14 @@ module "wrapper_ecs_service" {
 
       ecs_task_volume_efs = {
         root = {
-          efs_name     = "dmc-prd-example-00"
+          efs_name     = "dmc-lab-example-00"
           access_point = "root"
         }
         example = {
-          efs_name     = "dmc-prd-example-00"
+          efs_name     = "dmc-lab-example-00"
           access_point = "example"
         }
       }
-
-
-
       # https://dmc-prd-core-external-00.democorp.cloud/filebrowser/files/
       # admin / admin (default credentials)
       containers = {
@@ -306,7 +301,7 @@ module "wrapper_ecs_service" {
               container_port = 8080
               load_balancer = {
                 "alb1" = {
-                  alb_name = "dmc-prd-example-ExExternal01"
+                  alb_name = "dmc-lab-example-internal-00"
                   listener_rules = {
                     "rule1" = {
                       # priority          = 10
@@ -359,7 +354,7 @@ module "wrapper_ecs_service" {
               # cidr_blocks    = [""]  # Default: [vpc_cidr]
               load_balancer = {
                 "alb1" = {
-                  alb_name = "dmc-prd-example-ExExternal01"
+                  alb_name = "dmc-lab-example-internal-00"
                   # target_group_custom_name = "custom-name" # Default: "${local.common_name}-${service_name}-${port_values.container_port}-${alb_key}"
                   alb_listener_port    = 443
                   deregistration_delay = 300
@@ -455,7 +450,7 @@ module "wrapper_ecs_service" {
               # cidr_blocks    = [""]  # Default: [vpc_cidr]
               load_balancer = {
                 "alb1" = {
-                  alb_name          = "dmc-prd-example-ExExternal01"
+                  alb_name          = "dmc-lab-example-internal-00"
                   alb_listener_port = 443
                   dns_records = {
                     "AlbMulti1" = {
@@ -474,7 +469,7 @@ module "wrapper_ecs_service" {
                   }
                 }
                 "alb2" = {
-                  alb_name          = "dmc-prd-example-ExExternal01" # Can be another ALB / Internal for example
+                  alb_name          = "dmc-lab-example-internal-00" # Can be another ALB / Internal for example
                   alb_listener_port = 443
                   dns_records = {
                     "AlbMulti2" = {
@@ -528,7 +523,7 @@ module "wrapper_ecs_service" {
               # cidr_blocks    = [""]  # Default: [vpc_cidr]
               load_balancer = {
                 "alb1" = {
-                  alb_name          = "dmc-prd-example-ExExternal01"
+                  alb_name          = "dmc-lab-example-internal-00"
                   alb_listener_port = 443
                   dns_records = {
                     "ExDns" = {
@@ -761,7 +756,7 @@ module "wrapper_ecs_service" {
               container_port = 80
               load_balancer = {
                 "alb1" = {
-                  alb_name = "dmc-prd-example-ExExternal01"
+                  alb_name = "dmc-lab-example-internal-00"
                   listener_rules = {
                     "rule1" = {
                       # priority          = 10
@@ -884,12 +879,12 @@ module "wrapper_ecs_service" {
               container_port = 80
               load_balancer = {
                 "nlb1" = {
-                  alb_name            = "dmc-prd-example-NlbExample01"
-                  target_group_attach = "dmc-prd-example-nlb-tcp-80"
+                  alb_name            = "dmc-lab-example-nlb-internal-00"
+                  target_group_attach = "dmc-lab-example-nlb-tcp-80"
                 }
                 "alb1" = {
-                  alb_name                 = "dmc-prd-example-ExExternal01"
-                  target_group_custom_name = "custom-name" # Default: "${local.common_name}-${service_name}-${port_values.container_port}-${alb_key}"
+                  alb_name                 = "dmc-lab-example-internal-00"
+                  target_group_custom_name = "ex-nlb-custom-tg-name" # Default: "${local.common_name}-${service_name}-${port_values.container_port}-${alb_key}"
                   alb_listener_port        = 443
                   deregistration_delay     = 300
                   slow_start               = 30
@@ -940,8 +935,8 @@ module "wrapper_ecs_service" {
               container_port = 80
               load_balancer = {
                 "alb1" = {
-                  alb_name                 = "dmc-prd-example-ExExternal01"
-                  target_group_custom_name = "custom-name" # Default: "${local.common_name}-${service_name}-${port_values.container_port}-${alb_key}"
+                  alb_name                 = "dmc-lab-example-internal-00"
+                  target_group_custom_name = "ex-multi-custom-tg-name1" # Default: "${local.common_name}-${service_name}-${port_values.container_port}-${alb_key}"
                   alb_listener_port        = 443
                   deregistration_delay     = 300
                   slow_start               = 30
@@ -974,8 +969,8 @@ module "wrapper_ecs_service" {
               container_port = 88
               load_balancer = {
                 "alb2" = {
-                  alb_name                 = "dmc-prd-example-ExExternal01" # Can be another LB
-                  target_group_custom_name = "custom-name-2"                # Default: "${local.common_name}-${service_name}-${port_values.container_port}-${alb_key}"
+                  alb_name                 = "dmc-lab-example-internal-00" # Can be another LB
+                  target_group_custom_name = "ex-multi-custom-tg-name2"    # Default: "${local.common_name}-${service_name}-${port_values.container_port}-${alb_key}"
                   alb_listener_port        = 443
                   deregistration_delay     = 300
                   slow_start               = 30
@@ -1009,8 +1004,8 @@ module "wrapper_ecs_service" {
               container_port = 27000
               load_balancer = {
                 "tcp" = {
-                  alb_name            = "dmc-prd-example-NlbExample01"
-                  target_group_attach = "dmc-prd-example-nlb-tcp-27000"
+                  alb_name            = "dmc-lab-example-nlb-internal-00"
+                  target_group_attach = "dmc-lab-example-nlb-tcp-27000"
                 }
               }
             }
@@ -1018,8 +1013,8 @@ module "wrapper_ecs_service" {
               container_port = 27001
               load_balancer = {
                 "udp" = {
-                  alb_name            = "dmc-prd-example-NlbExample01"
-                  target_group_attach = "dmc-prd-example-nlb-udp-27001"
+                  alb_name            = "dmc-lab-example-nlb-internal-00"
+                  target_group_attach = "dmc-lab-example-nlb-udp-27001"
                 }
               }
             }
