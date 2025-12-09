@@ -55,10 +55,24 @@ locals {
   app_container_definition_secrets_map = merge(flatten(local.app_container_definition_secrets_map_tmp)...)
 }
 
-# ARMO OBJETO CON MD5 DE SECRETOS PARA INYECTAR COMO VARIABLE DE ENTORNO
+# ARMO OBJETO CON MD5 DE SECRETOS POR CONTENEDOR PARA INYECTAR COMO VARIABLE DE ENTORNO
 locals {
-  map_environment_secrets_md5 = length(local.app_container_definition_secrets_create) > 0 ? {
-    "SECRETS_MD5" = md5(jsonencode(local.app_container_definition_secrets_create))
-  } : {}
+  map_environment_secrets_md5_tmp = [
+    for service_key, service_config in var.ecs_service_parameters : {
+      for container_key, container in service_config.containers :
+      "${service_key}-${container_key}" => {
+        for secret_key, secret_value in try(container.map_secrets, {}) :
+        secret_key => secret_value
+      }
+    }
+  ]
 
+  map_environment_secrets_md5_values = merge(flatten(local.map_environment_secrets_md5_tmp)...)
+
+  map_environment_secrets_md5 = {
+    for container_key, secrets in local.map_environment_secrets_md5_values :
+    container_key => length(secrets) > 0 ? {
+      "SECRETS_MD5" = md5(jsonencode(secrets))
+    } : {}
+  }
 }

@@ -5,7 +5,7 @@ locals {
     for service_key, service in var.ecs_service_parameters : {
       for container_key, container in service.containers :
       "${service_key}-${container_key}" => [
-        for key, value in try(merge(try(container.map_environment, {}), local.map_environment_secrets_md5), []) :
+        for key, value in try(merge(try(container.map_environment, {}), try(local.map_environment_secrets_md5["${service_key}-${container_key}"], {})), []) :
         {
           "name"  = key
           "value" = value
