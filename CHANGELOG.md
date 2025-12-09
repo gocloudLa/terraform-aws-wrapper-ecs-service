@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/compare/v1.3.0...v1.3.1) (2025-12-09)
+
+
+### Bug Fixes
+
+* **secrets:** generate SECRETS_MD5 per container to prevent restarts ([#18](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/issues/18)) ([b511dc8](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/commit/b511dc86faa431d2511cf080d589e7299ab58e6c))
+
 ## [1.3.0](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/compare/v1.2.0...v1.3.0) (2025-11-19)
 
 
