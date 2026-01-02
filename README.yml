@@ -966,6 +966,36 @@ features:
               enable_autoscaling = false
               enable_execute_command = true
 
+              security_group_egress_rules_custom = {
+              "example1" = {
+                container_port = 27001
+                protocol       = "udp"
+                cidr_ipv4    = "172.10.0.0/21"
+                description    = "example1"
+              },
+              "example2" = {
+                container_port = 27000
+                protocol       = "tcp"
+                cidr_ipv4    = "172.10.0.0/21"
+                description    = "example2"
+              }
+            }
+
+            securty_group_ingress_rules_custom = {
+              "example1" = {
+                container_port = 27001
+                protocol       = "udp"
+                cidr_ipv4    = "172.10.0.0/21"
+                description    = "example1"
+              },
+              "example2" = {
+                container_port = 27000
+                protocol       = "tcp"
+                cidr_ipv4    = "172.10.0.0/21"
+                description    = "example2"
+              }
+            }
+
               containers = {
                 app = {
                   image                 = "public.ecr.aws/docker/library/nginx:latest"
