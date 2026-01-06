@@ -925,6 +925,24 @@ module "wrapper_ecs_service" {
 
       enable_execute_command = true
 
+      # securty_group_egress_rules_custom = {
+      #   "example" = {
+      #     container_port = 27001
+      #     protocol       = "udp"
+      #     cidr_ipv4    = "172.10.96.0/21"
+      #     description    = "example"
+      #   }
+      # }
+
+      # securty_group_ingress_rules_custom = {
+      #   "example" = {
+      #     container_port = 27001
+      #     protocol       = "udp"
+      #     cidr_ipv4      = "172.10.96.0/21"
+      #     description    = "example"
+      #   }
+      # }
+
       containers = {
         app = {
           image                 = "public.ecr.aws/docker/library/nginx:latest"
