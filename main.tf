@@ -107,8 +107,8 @@ module "ecs_service" {
   security_group_description              = try(each.value.security_group_description, var.ecs_service_defaults.security_group_description, null)
   security_group_ids                      = try(each.value.security_group_ids, var.ecs_service_defaults.security_group_ids, [])
   security_group_name                     = try(each.value.security_group_name, var.ecs_service_defaults.security_group_name, null)
-  security_group_ingress_rules            = try(each.value.securty_group_ingress_rules_custom, {}) != {} ? merge(local.security_group_ingress_rules[each.key], each.value.securty_group_ingress_rules_custom) : local.security_group_ingress_rules[each.key]
-  security_group_egress_rules             = try(each.value.securty_group_egress_rules_custom, {}) != {} ? merge(local.security_group_egress_rules[each.key], each.value.securty_group_egress_rules_custom) : local.security_group_egress_rules[each.key]
+  security_group_ingress_rules            = local.security_group_ingress_rules[each.key]
+  security_group_egress_rules             = local.security_group_egress_rules[each.key]
   security_group_tags                     = try(each.value.security_group_tags, var.ecs_service_defaults.security_group_tags, {})
   security_group_use_name_prefix          = try(each.value.security_group_use_name_prefix, var.ecs_service_defaults.security_group_use_name_prefix, true)
   service_connect_configuration           = try(each.value.service_connect_configuration, var.ecs_service_defaults.service_connect_configuration, null)
