@@ -1012,8 +1012,8 @@ module "wrapper_ecs_service" {
             }
             "nlb-udp" = {
               container_port = 27001
-              protocol       = "udp" # Default: tcp
-              cidr_blocks    = ["1.1.1.1/32", "2.2.2.2/32"]  # Default: [vpc_cidr] - Supports multiple CIDR blocks
+              protocol       = "udp"                        # Default: tcp
+              cidr_blocks    = ["1.1.1.1/32", "2.2.2.2/32"] # Default: [vpc_cidr] - Supports multiple CIDR blocks
               load_balancer = {
                 "udp" = {
                   alb_name            = "dmc-lab-example-nlb-internal-00"
