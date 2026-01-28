@@ -917,6 +917,7 @@ module "wrapper_ecs_service" {
         }
       }
     }
+
     ExMultiPortLb = {
       # ecs_cluster_name                       = "dmc-prd-core-00"
       # vpc_name                               = "dmc-prd"
@@ -1011,6 +1012,8 @@ module "wrapper_ecs_service" {
             }
             "nlb-udp" = {
               container_port = 27001
+              protocol       = "udp"                        # Default: tcp
+              cidr_blocks    = ["1.1.1.1/32", "2.2.2.2/32"] # Default: [vpc_cidr] - Supports multiple CIDR blocks
               load_balancer = {
                 "udp" = {
                   alb_name            = "dmc-lab-example-nlb-internal-00"
@@ -1020,6 +1023,97 @@ module "wrapper_ecs_service" {
             }
           }
         }
+      }
+    }
+
+    ExSecurityGroups = {
+      # ecs_cluster_name                       = "dmc-prd-core-00"
+      # vpc_name                               = "dmc-prd"
+      # subnet_name                            = "dmc-prd-private*"
+      enable_autoscaling     = false
+      enable_execute_command = true
+
+      # Policies used by tasks from the developed code
+      tasks_iam_role_policies   = {}
+      tasks_iam_role_statements = []
+      # Policies used by the service to start tasks (ecr / ssm / etc)
+      task_exec_iam_role_policies = {}
+      task_exec_iam_statements    = []
+
+      ecs_task_volume = []
+
+      containers = {
+        app = {
+          image                 = "public.ecr.aws/docker/library/nginx:latest"
+          create_ecr_repository = false
+          ports = {
+            "port1" = {
+              container_port = 80
+            }
+            "port2" = {
+              container_port = 443
+            }
+            "port3" = {
+              container_port = 8080
+            }
+          }
+          map_environment = {}
+          map_secrets     = {}
+          mount_points    = []
+        }
+      }
+
+      # Custom security group rules
+      # If specified, overrides auto-calculated ingress rules and default egress rules
+      security_group_ingress_rules = {
+        "custom-http" = {
+          from_port   = 80
+          to_port     = 80
+          ip_protocol = "tcp"
+          cidr_ipv4   = "10.0.0.0/8"
+          description = "Custom HTTP rule"
+        }
+        "custom-https" = {
+          from_port   = 443
+          to_port     = 443
+          ip_protocol = "tcp"
+          cidr_ipv4   = "10.0.0.0/8"
+          description = "Custom HTTPS rule"
+        }
+        "custom-api" = {
+          from_port   = 8080
+          to_port     = 8080
+          ip_protocol = "tcp"
+          cidr_ipv4   = "172.16.0.0/12"
+          description = "Custom API rule"
+        }
+        # "all-traffic" = {
+        #   ip_protocol = "-1"
+        #   cidr_ipv4   = "0.0.0.0/0"
+        #   description = "All Traffic"
+        # }
+      }
+
+      security_group_egress_rules = {
+        "custom-egress-https" = {
+          from_port   = 443
+          to_port     = 443
+          ip_protocol = "tcp"
+          cidr_ipv4   = "0.0.0.0/0"
+          description = "Custom HTTPS egress rule"
+        }
+        "custom-egress-dns" = {
+          from_port   = 53
+          to_port     = 53
+          ip_protocol = "udp"
+          cidr_ipv4   = "0.0.0.0/0"
+          description = "DNS egress rule"
+        }
+        # "all-traffic" = {
+        #   ip_protocol = "-1"
+        #   cidr_ipv4   = "0.0.0.0/0"
+        #   description = "All Traffic"
+        # }
       }
     }
   }
