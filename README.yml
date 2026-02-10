@@ -1192,6 +1192,64 @@ features:
             }
           }
           ```
+  - icon: 📈
+    title: ECS Service Autoscaling Policies
+    short_description: ECS service autoscaling using target tracking policies and custom CloudWatch metrics
+    long_description: |
+      Provides autoscaling configuration for ECS services using AWS Application Auto Scaling.<br/><br/>
+
+      **Target Tracking Autoscaling:**
+      - Automatically adjusts the number of running tasks based on a metric target value
+      - Supports predefined or customized CloudWatch metrics
+
+      **Customized Metric Specification:**
+      - Allows using CloudWatch metrics directly instead of predefined ECS metrics
+      - Supports custom aggregation statistics like `Maximum`, `Average`, or `Sum`
+      - Useful when scaling based on peak container usage instead of service average
+      - Requires specifying metric namespace, metric name, and dimensions
+
+      **Autoscaling Behavior:**
+      - Scale-out occurs when metric exceeds the target value
+      - Scale-in occurs when metric drops below the target value
+      - AWS manages CloudWatch alarms automatically
+      - Cooldowns and scaling thresholds are handled by Application Auto Scaling
+    examples:
+      - title: Configuration Code
+        code: |
+          ```hcl
+          ecs_service_parameters = {
+            ExAutoscalingPolicies = {
+
+              enable_autoscaling   = true
+              autoscaling_policies = {
+                cpu = {
+                  policy_type = "TargetTrackingScaling"
+
+                  target_tracking_scaling_policy_configuration = {
+                    target_value = 70
+
+                    customized_metric_specification = {
+                      namespace   = "AWS/ECS"
+                      metric_name = "CPUUtilization"
+                      statistic   = "Maximum"
+
+                      dimensions = [
+                        {
+                          name  = "ClusterName"
+                          value = "${local.common_name}-00"
+                        },
+                        {
+                          name  = "ServiceName"
+                          value = "${local.common_name}-exautoscalingpolicies"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+          ```
 important_notes: ""
 input_table: |
   | name | ECS service instance name. | `string` | `"${local.common_name}-${each.key}"` | no |
