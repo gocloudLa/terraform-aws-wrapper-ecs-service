@@ -1299,6 +1299,11 @@ ecs_service_parameters = {
   ExAutoscalingPolicies = {
 
     enable_autoscaling   = true
+    
+    desired_count            = 1
+    autoscaling_max_capacity = 1
+    autoscaling_min_capacity = 3
+
     autoscaling_policies = {
       cpu = {
         policy_type = "TargetTrackingScaling"
