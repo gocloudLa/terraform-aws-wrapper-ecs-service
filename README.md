@@ -39,6 +39,8 @@ This module provides enterprise-grade features including automated load balancer
 
 - 🔒 [Custom Security Group Rules & Multiple CIDR Blocks](#custom-security-group-rules-&-multiple-cidr-blocks) - Custom security group rules and support for multiple CIDR blocks per port
 
+- 📈 [ECS Service Autoscaling Policies](#ecs-service-autoscaling-policies) - ECS service autoscaling using target tracking policies and custom CloudWatch metrics
+
 
 
 ### 🔗 External Modules
@@ -1260,6 +1262,72 @@ ecs_service_parameters = {
         ip_protocol = "udp"
         cidr_ipv4   = "0.0.0.0/0"
         description = "Allow DNS egress to any destination"
+      }
+    }
+  }
+}
+```
+
+
+</details>
+
+
+### ECS Service Autoscaling Policies
+Provides autoscaling configuration for ECS services using AWS Application Auto Scaling.<br/><br/>
+
+**Target Tracking Autoscaling:**
+- Automatically adjusts the number of running tasks based on a metric target value
+- Supports predefined or customized CloudWatch metrics
+
+**Customized Metric Specification:**
+- Allows using CloudWatch metrics directly instead of predefined ECS metrics
+- Supports custom aggregation statistics like `Maximum`, `Average`, or `Sum`
+- Useful when scaling based on peak container usage instead of service average
+- Requires specifying metric namespace, metric name, and dimensions
+
+**Autoscaling Behavior:**
+- Scale-out occurs when metric exceeds the target value
+- Scale-in occurs when metric drops below the target value
+- AWS manages CloudWatch alarms automatically
+- Cooldowns and scaling thresholds are handled by Application Auto Scaling
+
+
+<details><summary>Configuration Code</summary>
+
+```hcl
+ecs_service_parameters = {
+  ExAutoscalingPolicies = {
+
+    enable_autoscaling   = true
+    
+    desired_count            = 1
+    autoscaling_max_capacity = 1
+    autoscaling_min_capacity = 3
+
+    autoscaling_policies = {
+      cpu = {
+        policy_type = "TargetTrackingScaling"
+
+        target_tracking_scaling_policy_configuration = {
+          target_value = 70
+
+          customized_metric_specification = {
+            namespace   = "AWS/ECS"
+            metric_name = "CPUUtilization"
+            statistic   = "Maximum"
+
+            dimensions = [
+              {
+                name  = "ClusterName"
+                value = "${local.common_name}-00"
+              },
+              {
+                name  = "ServiceName"
+                value = "${local.common_name}-exautoscalingpolicies"
+              }
+            ]
+          }
+        }
       }
     }
   }
