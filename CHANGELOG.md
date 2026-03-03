@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/compare/v1.3.1...v1.4.0) (2026-01-28)
+
+
+### Features
+
+* **sg:** improve sg rules discovery & add custom rules support ([#20](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/issues/20)) ([8a6e2c1](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/commit/8a6e2c1e001a36d7f16824b986136d71c52dd660))
+
 ## [1.3.1](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/compare/v1.3.0...v1.3.1) (2025-12-09)
 
 

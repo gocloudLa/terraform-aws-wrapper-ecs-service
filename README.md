@@ -37,6 +37,10 @@ This module provides enterprise-grade features including automated load balancer
 
 - 🔗 [Multi-Port Load Balancing for ECS Services](#multi-port-load-balancing-for-ecs-services) - Expose multiple container ports through ALB and NLB
 
+- 🔒 [Custom Security Group Rules & Multiple CIDR Blocks](#custom-security-group-rules-&-multiple-cidr-blocks) - Custom security group rules and support for multiple CIDR blocks per port
+
+- 📈 [ECS Service Autoscaling Policies](#ecs-service-autoscaling-policies) - ECS service autoscaling using target tracking policies and custom CloudWatch metrics
+
 
 
 ### 🔗 External Modules
@@ -85,7 +89,7 @@ ecs_service_parameters = {
           "port1" = {
             container_port = 80
             # protocol       = "tcp" # Default: tcp
-            # cidr_blocks    = [""]  # Default: [vpc_cidr]
+            # cidr_blocks    = ["10.0.0.0/8", "172.16.0.0/12"]  # Default: [vpc_cidr] - Networks/hosts allowed to access this port. Supports multiple CIDR blocks
             load_balancer = {
               "alb1" = {
                 alb_name = "dmc-prd-core-external-00"
@@ -230,7 +234,7 @@ ecs_service_parameters = {
             container_port = 80
             # host_port      = 80    # Default: container_port
             # protocol       = "tcp" # Default: tcp
-            # cidr_blocks    = [""]  # Default: [vpc_cidr]
+            # cidr_blocks    = ["10.0.0.0/8", "172.16.0.0/12"]  # Default: [vpc_cidr] - Networks/hosts allowed to access this port. Supports multiple CIDR blocks
             load_balancer = {
               "alb1" = {
                 alb_name             = "dmc-prd-core-external-00"
@@ -343,7 +347,7 @@ ecs_service_parameters = {
           "port1" = {
             container_port = 80
             # protocol       = "tcp" # Default: tcp
-            # cidr_blocks    = [""]  # Default: [vpc_cidr]
+            # cidr_blocks    = ["10.0.0.0/8", "172.16.0.0/12"]  # Default: [vpc_cidr] - Networks/hosts allowed to access this port. Supports multiple CIDR blocks
             load_balancer = {
               "alb1" = {
                 alb_name          = "dmc-prd-core-external-00"
@@ -1034,6 +1038,28 @@ ecs_service_parameters = {
     enable_autoscaling = false
     enable_execute_command = true
 
+          # Custom security group rules (optional)
+          # If specified, overrides auto-calculated ingress rules and default egress rules
+          # security_group_egress_rules = {
+          #   "example" = {
+          #     from_port      = 27001
+          #     to_port        = 27001
+          #     ip_protocol    = "udp"
+          #     cidr_ipv4      = "172.10.96.0/21"
+          #     description    = "example"
+          #   }
+          # }
+
+          # security_group_ingress_rules = {
+          #   "example" = {
+          #     from_port      = 27001
+          #     to_port        = 27001
+          #     ip_protocol    = "udp"
+          #     cidr_ipv4      = "172.10.96.0/21"
+          #     description    = "example"
+          #   }
+          # }
+
     containers = {
       app = {
         image                 = "public.ecr.aws/docker/library/nginx:latest"
@@ -1138,6 +1164,180 @@ ecs_service_parameters = {
 </details>
 
 
+### Custom Security Group Rules & Multiple CIDR Blocks
+Provides flexible security group configuration with automatic rule generation and custom rule support.<br/><br/>
+
+**Automatic Ingress Rules:**
+- Automatically generates ingress rules from container port configurations
+- Use `cidr_blocks` in port configuration to specify which networks/hosts can access the container
+- Supports multiple CIDR blocks per port (creates separate security group rules for each CIDR block)
+- Each CIDR block defines a network range that will be allowed to access the container on that port
+- Defaults to VPC CIDR if `cidr_blocks` is not specified (allows access only from within the VPC)
+
+**Custom Security Group Rules:**
+- Override auto-calculated ingress rules with custom `security_group_ingress_rules`
+- Override default egress rules (allow all) with custom `security_group_egress_rules`
+- When custom rules are specified, auto-calculated/default rules are not applied
+- Provides full control over security group configuration when automatic rules don't meet your needs
+
+**Multiple CIDR Blocks:**
+- Specify multiple CIDR blocks in the `cidr_blocks` list for a port to allow access from multiple networks
+- Each CIDR block generates a separate security group rule
+- Useful for allowing traffic from multiple VPCs, subnets, or network ranges
+
+
+<details><summary>Configuration Code</summary>
+
+```hcl
+ecs_service_parameters = {
+  ExSecurityGroups = {
+    enable_autoscaling = false
+    enable_execute_command = true
+
+    # Policies used by tasks from the developed code
+    tasks_iam_role_policies   = {}
+    tasks_iam_role_statements = []
+    # Policies used by the service to start tasks (ecr / ssm / etc)
+    task_exec_iam_role_policies = {}
+    task_exec_iam_statements    = []
+
+    containers = {
+      app = {
+        image                 = "public.ecr.aws/docker/library/nginx:latest"
+        create_ecr_repository = false
+        ports = {
+          "port1" = {
+            container_port = 80
+          }
+          "port2" = {
+            container_port = 443
+          }
+          "port3" = {
+            container_port = 8080
+          }
+        }
+        map_environment = {}
+        map_secrets     = {}
+        mount_points    = []
+      }
+    }
+
+    # Custom security group rules
+    # If specified, overrides auto-calculated ingress rules and default egress rules
+    security_group_ingress_rules = {
+      "custom-http" = {
+        from_port   = 80
+        to_port     = 80
+        ip_protocol = "tcp"
+        cidr_ipv4   = "10.0.0.0/8"
+        description = "Allow HTTP access from 10.0.0.0/8 network"
+      }
+      "custom-https" = {
+        from_port   = 443
+        to_port     = 443
+        ip_protocol = "tcp"
+        cidr_ipv4   = "10.0.0.0/8"
+        description = "Allow HTTPS access from 10.0.0.0/8 network"
+      }
+      "custom-api" = {
+        from_port   = 8080
+        to_port     = 8080
+        ip_protocol = "tcp"
+        cidr_ipv4   = "172.16.0.0/12"
+        description = "Allow API access from 172.16.0.0/12 network"
+      }
+    }
+
+    security_group_egress_rules = {
+      "custom-egress-https" = {
+        from_port   = 443
+        to_port     = 443
+        ip_protocol = "tcp"
+        cidr_ipv4   = "0.0.0.0/0"
+        description = "Allow HTTPS egress to any destination"
+      }
+      "custom-egress-dns" = {
+        from_port   = 53
+        to_port     = 53
+        ip_protocol = "udp"
+        cidr_ipv4   = "0.0.0.0/0"
+        description = "Allow DNS egress to any destination"
+      }
+    }
+  }
+}
+```
+
+
+</details>
+
+
+### ECS Service Autoscaling Policies
+Provides autoscaling configuration for ECS services using AWS Application Auto Scaling.<br/><br/>
+
+**Target Tracking Autoscaling:**
+- Automatically adjusts the number of running tasks based on a metric target value
+- Supports predefined or customized CloudWatch metrics
+
+**Customized Metric Specification:**
+- Allows using CloudWatch metrics directly instead of predefined ECS metrics
+- Supports custom aggregation statistics like `Maximum`, `Average`, or `Sum`
+- Useful when scaling based on peak container usage instead of service average
+- Requires specifying metric namespace, metric name, and dimensions
+
+**Autoscaling Behavior:**
+- Scale-out occurs when metric exceeds the target value
+- Scale-in occurs when metric drops below the target value
+- AWS manages CloudWatch alarms automatically
+- Cooldowns and scaling thresholds are handled by Application Auto Scaling
+
+
+<details><summary>Configuration Code</summary>
+
+```hcl
+ecs_service_parameters = {
+  ExAutoscalingPolicies = {
+
+    enable_autoscaling   = true
+    
+    desired_count            = 1
+    autoscaling_max_capacity = 1
+    autoscaling_min_capacity = 3
+
+    autoscaling_policies = {
+      cpu = {
+        policy_type = "TargetTrackingScaling"
+
+        target_tracking_scaling_policy_configuration = {
+          target_value = 70
+
+          customized_metric_specification = {
+            namespace   = "AWS/ECS"
+            metric_name = "CPUUtilization"
+            statistic   = "Maximum"
+
+            dimensions = [
+              {
+                name  = "ClusterName"
+                value = "${local.common_name}-00"
+              },
+              {
+                name  = "ServiceName"
+                value = "${local.common_name}-exautoscalingpolicies"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+
+</details>
+
+
 
 
 ## 📑 Inputs
@@ -1212,7 +1412,8 @@ ecs_service_parameters = {
 | security_group_description                       | Description for the security group.                                                                                                        | `string` | `null`                                                                                                               | no       |
 | security_group_ids                               | Security group IDs associated with the ECS service.                                                                                        | `list`   | `[]`                                                                                                                 | no       |
 | security_group_name                              | Name of the security group associated with the ECS service.                                                                                | `string` | `null`                                                                                                               | no       |
-| security_group_ingress_rules                     | Ingress rules for the security group.                                                                                                      | `map`    | `local.security_group_rules_calculated[each.key]`                                                                    | no       |
+| security_group_ingress_rules                     | Ingress rules for the security group. If specified, overrides auto-calculated rules from ports.                                            | `map`    | `local.security_group_ingress_rules[each.key]`                                                                       | no       |
+| security_group_egress_rules                      | Egress rules for the security group. If specified, overrides default egress rules (allow all).                                             | `map`    | `local.security_group_egress_rules[each.key]`                                                                        | no       |
 | security_group_tags                              | Tags for the security group.                                                                                                               | `map`    | `{}`                                                                                                                 | no       |
 | security_group_use_name_prefix                   | Indicates whether to use a prefix for the security group name.                                                                             | `bool`   | `true`                                                                                                               | no       |
 | service_connect_configuration                    | Service Connect configuration.                                                                                                             | `map`    | `{}`                                                                                                                 | no       |
