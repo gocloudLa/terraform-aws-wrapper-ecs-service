@@ -616,7 +616,7 @@ module "wrapper_ecs_service" {
               # ONLY ONE ALLOWED PER SERVICE
               service_discovery = {
                 # record_name    = "" # Default: service_name
-                namespace_name = "project1.internal"
+                namespace_name = "lab.democorp.internal"
               }
             }
           }
