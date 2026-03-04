@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.1](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/compare/v1.4.0...v1.4.1) (2026-03-04)
+
+
+### Bug Fixes
+
+* **deps:** bump the all-terraform-dependencies group across 1 directory with 2 updates ([#21](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/issues/21)) ([38d8b0f](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/commit/38d8b0f4dd7a09bb3e2862b3278cb36bed7578e6))
+
 ## [1.4.0](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/compare/v1.3.1...v1.4.0) (2026-01-28)
 
 
