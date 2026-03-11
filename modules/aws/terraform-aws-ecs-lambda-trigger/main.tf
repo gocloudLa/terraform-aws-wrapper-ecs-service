@@ -9,6 +9,9 @@ module "ecs_lambda_trigger_lambda" {
   runtime         = "python3.9"
   timeout         = 10
 
+  ignore_source_code_hash      = true
+  trigger_on_package_timestamp = false
+
   source_path = "${path.module}/lambdas/ecs_lambda_trigger"
 
   attach_network_policy = false
