@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.2](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/compare/v1.4.1...v1.4.2) (2026-03-11)
+
+
+### Bug Fixes
+
+* **deps:** bump terraform-aws-modules/lambda/aws from 8.1.2 to 8.7.0 in /modules/aws/terraform-aws-ecs-lambda-trigger in the all-terraform-dependencies group across 1 directory ([#26](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/issues/26)) ([1e87343](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/commit/1e873439e2147352c745833bce64818a4d2789fd))
+
 ## [1.4.1](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/compare/v1.4.0...v1.4.1) (2026-03-04)
 
 
