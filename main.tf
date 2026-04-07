@@ -114,7 +114,7 @@ module "ecs_service" {
   service_connect_configuration           = try(each.value.service_connect_configuration, var.ecs_service_defaults.service_connect_configuration, null)
   service_registries                      = try(each.value.service_registries, local.service_registries[each.key], var.ecs_service_defaults.service_registries, null)
   service_tags                            = try(each.value.service_tags, var.ecs_service_defaults.service_tags, {})
-  skip_destroy                            = coalesce(try(each.value.skip_destroy, null), try(var.ecs_service_defaults.skip_destroy, null), true)
+  skip_destroy                            = try(each.value.skip_destroy, var.ecs_service_defaults.skip_destroy, true)
   subnet_ids                              = data.aws_subnets.this[each.key].ids
   task_definition_arn                     = try(each.value.task_definition_arn, var.ecs_service_defaults.task_definition_arn, null)
   task_definition_placement_constraints   = try(each.value.task_definition_placement_constraints, var.ecs_service_defaults.task_definition_placement_constraints, {})
