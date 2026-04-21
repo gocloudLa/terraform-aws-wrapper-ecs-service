@@ -1333,7 +1333,7 @@ input_table: |
   | service_connect_configuration | Service Connect configuration. | `map` | `{}` | no |
   | service_registries | Service registries associated with the ECS service. | `list` | `local.service_registries[each.key]` | no |
   | service_tags | Tags for the ECS service. | `map` | `{}` | no |
-  | skip_destroy | Indicates whether to skip service destruction. | `bool` | `null` | no |
+  | skip_destroy | If true, the previous ECS task definition revision is not deregistered when Terraform replaces the task definition. Explicit `null` at the service or defaults level falls back to `true`. | `bool` | `true` | no |
   | subnet_ids | Subnet IDs associated with the ECS service. | `list` | `data.aws_subnets.this[each.key].ids` | no |
   | task_definition_arn | ARN of the task definition associated with the ECS service. | `string` | `null` | no |
   | task_definition_placement_constraints | Placement constraints for the task definition. | `map` | `{}` | no |

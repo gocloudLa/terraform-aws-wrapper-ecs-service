@@ -109,7 +109,7 @@ module "wrapper_ecs_service" {
           }
           map_environment = {
             "ENV_1" = "env_value_1"
-            "ENV_1" = "env_value_2"
+            "ENV_2" = "env_value_2"
           }
           map_secrets = {
             "SECRET_ENV_1" = "secret_env_value_1"
