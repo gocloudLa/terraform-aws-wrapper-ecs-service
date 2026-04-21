@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.3](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/compare/v1.4.2...v1.4.3) (2026-04-21)
+
+
+### Bug Fixes
+
+* **task-definition:** change skip_destroy default value to true ([#28](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/issues/28)) ([ec9c193](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/commit/ec9c193e2acdf361800852a82e3b966679d11f21))
+
 ## [1.4.2](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/compare/v1.4.1...v1.4.2) (2026-03-11)
 
 
