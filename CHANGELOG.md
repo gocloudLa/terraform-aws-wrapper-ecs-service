@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.5.0](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/compare/v1.4.3...v1.5.0) (2026-07-31)
+
+
+### Features
+
+* **alarms:** add custom alarm description ([#31](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/issues/31)) ([2fd007a](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/commit/2fd007a57921f0bfea63b49cdefb1b7722fb7450))
+* **loadbalancer:** add protocol_version for lb ([#32](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/issues/32)) ([6ee7170](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/commit/6ee7170280aa3cff1611a7a8f88713dcf946d24b))
+
 ## [1.4.3](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/compare/v1.4.2...v1.4.3) (2026-04-21)
 
 
