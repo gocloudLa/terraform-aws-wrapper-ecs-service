@@ -136,6 +136,7 @@ resource "aws_lb_target_group" "this" {
   vpc_id               = data.aws_vpc.this[each.value.service_name].id
   port                 = each.value.port_values.container_port
   protocol             = try(each.value.alb_values.protocol, "HTTP")
+  protocol_version     = try(each.value.alb_values.protocol_version, "HTTP1")
   target_type          = "ip"
   deregistration_delay = try(each.value.alb_values.deregistration_delay, 300)
   slow_start           = try(each.value.alb_values.slow_start, 0)

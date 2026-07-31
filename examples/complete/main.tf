@@ -349,9 +349,10 @@ module "wrapper_ecs_service" {
           ports = {
             "port1" = {
               container_port = 80
-              # host_port      = 80    # Default: container_port
-              # protocol       = "tcp" # Default: tcp
-              # cidr_blocks    = [""]  # Default: [vpc_cidr]
+              # host_port         = 80      # Default: container_port
+              # protocol          = "tcp"   # Default: tcp
+              # protocol_version  = "HTTP1" # Default: HTTP1. Other options: HTTP2 or GRPC
+              # cidr_blocks       = [""]    # Default: [vpc_cidr]
               load_balancer = {
                 "alb1" = {
                   alb_name = "dmc-lab-example-internal-00"
