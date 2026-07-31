@@ -640,6 +640,7 @@ module "wrapper_ecs_service" {
       alarms_cw_overrides = {
         # "warning-CPUUtilization" = {
         #   "actions_enabled"    = true
+        #   "description"        = "Custom CPUUtilization alarm description"
         #   "evaluation_periods" = 2
         #   "threshold"          = 30
         #   "period"             = 180
