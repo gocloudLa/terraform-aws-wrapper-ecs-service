@@ -55,7 +55,7 @@ locals {
         value,
         {
           alarm_name          = "ECS-${alarm}-${local.common_name}-${service_name}"
-          alarm_description   = try(values.alarms_overrides[alarm].description, value.description)
+          alarm_description   = try(values.alarms_overrides[alarm].description, "Service[${service_name}] ${value.description}")
           actions_enabled     = try(values.alarms_cw_overrides[alarm].actions_enabled, true)
           comparison_operator = try(values.alarms_cw_overrides[alarm].comparison_operator, value.comparison_operator, "GreaterThanOrEqualToThreshold")
           datapoints_to_alarm = try(values.alarms_cw_overrides[alarm].datapoints_to_alarm, value.datapoints_to_alarm, 5)
