@@ -53,54 +53,26 @@ resource "aws_iam_role_policy_attachment" "this" {
   policy_arn = each.value
 }
 
+# ECR push/pull comes from EC2InstanceProfileForImageBuilderECRContainerBuilds
 resource "aws_iam_role_policy" "this" {
   count = local.create ? 1 : 0
 
-  name = "ecr-push-pull"
+  name = "image-builder-extra"
   role = aws_iam_role.this[0].id
 
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = concat(
-      [
-        {
-          Effect   = "Allow"
-          Action   = ["ecr:GetAuthorizationToken"]
-          Resource = "*"
-        },
-        {
-          Effect = "Allow"
-          Action = [
-            "ecr:BatchCheckLayerAvailability",
-            "ecr:BatchGetImage",
-            "ecr:CompleteLayerUpload",
-            "ecr:GetDownloadUrlForLayer",
-            "ecr:InitiateLayerUpload",
-            "ecr:PutImage",
-            "ecr:UploadLayerPart",
-          ]
-          Resource = [var.repository_arn]
-        },
-        {
-          Effect = "Allow"
-          Action = [
-            "ecr-public:GetAuthorizationToken",
-            "ecr-public:BatchCheckLayerAvailability",
-            "ecr-public:GetDownloadUrlForLayer",
-            "ecr-public:BatchGetImage",
-          ]
-          Resource = "*"
-        },
-      ],
-      length(var.parent_image_repository_arns) > 0 ? [{
+      [{
         Effect = "Allow"
         Action = [
-          "ecr:BatchCheckLayerAvailability",
-          "ecr:BatchGetImage",
-          "ecr:GetDownloadUrlForLayer",
+          "ecr-public:GetAuthorizationToken",
+          "ecr-public:BatchCheckLayerAvailability",
+          "ecr-public:GetDownloadUrlForLayer",
+          "ecr-public:BatchGetImage",
         ]
-        Resource = var.parent_image_repository_arns
-      }] : [],
+        Resource = "*"
+      }],
       local.has_files ? [{
         Effect   = "Allow"
         Action   = ["s3:GetObject"]

@@ -30,11 +30,6 @@ variable "repository_name" {
   description = "Name of the existing ECR repository that receives the image."
 }
 
-variable "repository_arn" {
-  type        = string
-  description = "ARN of the existing ECR repository that receives the image."
-}
-
 variable "repository_url" {
   type        = string
   description = "URL of the existing ECR repository that receives the image."
@@ -43,6 +38,11 @@ variable "repository_url" {
 variable "parent_image" {
   type        = string
   description = "Base image of the build (e.g. public.ecr.aws/docker/library/nginx:1.27)."
+
+  validation {
+    condition     = length(var.parent_image) > 0
+    error_message = "image_builder.parent_image is required."
+  }
 }
 
 variable "commands" {
@@ -57,7 +57,7 @@ variable "image_tag" {
 
   validation {
     condition     = can(regex("^[0-9]+[.][0-9]+[.][0-9]+$", var.image_tag))
-    error_message = "image_tag must be a semantic version like 1.0.0."
+    error_message = "image_builder.image_tag is required and must be a semantic version like 1.0.0."
   }
 }
 
@@ -75,12 +75,6 @@ variable "directories" {
   type        = map(string)
   description = "Local directories copied into the image. Key is the destination directory, value the local path."
   default     = {}
-}
-
-variable "parent_image_repository_arns" {
-  type        = list(string)
-  description = "Private ECR repository ARNs the build may pull the parent image from."
-  default     = []
 }
 
 variable "entrypoint" {

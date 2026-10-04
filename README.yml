@@ -1271,7 +1271,8 @@ features:
       **You control when a build happens:**
       - A new image is built **only** when `image_tag` changes (semver `x.y.z`)
       - To release a new image, edit commands/files and bump `image_tag` in the same change
-      - Changing commands, files or parent image without bumping the tag does nothing
+      - Changing commands, files or parent image without bumping the tag does nothing (staged files in S3 may be updated, the image is not rebuilt)
+      - `enable = false` skips the build and behaves as if `image_builder` was not set (use it together with `image`)
       - The task definition points to `<ecr repo>:<image_tag>` and the service waits for the build
 
       **How to copy files:**
@@ -1279,7 +1280,7 @@ features:
       - `directories`: copies a whole local directory, `{ "/dest/in/image" = "./local/dir" }`
       - Everything is staged through a per-container S3 bucket, so there is no size limit
 
-      **Other options:** `parent_image_repository_arns` (private ECR parent), `instance_type` (`t3.medium`, or `t4g.medium` for ARM64), `bucket_name` (default `{common_name}-{service}-{container}-ib-content`), `image_tests_enabled`.
+      **Other options:** `instance_type` (`t3.medium`, or `t4g.medium` for ARM64), `bucket_name` (default `{common_name}-{service}-{container}-ib-content`), `image_tests_enabled`.
     examples:
       - title: Files, directories and commands
         code: |
@@ -1369,10 +1370,9 @@ features:
               containers = {
                 app = {
                   image_builder = {
-                    image_tag                    = "0.4.0"
-                    parent_image                 = "123456789012.dkr.ecr.us-east-1.amazonaws.com/base/python:3.12-arm64"
-                    parent_image_repository_arns = ["arn:aws:ecr:us-east-1:123456789012:repository/base/python"]
-                    commands                     = ["pip install boto3"]
+                    image_tag    = "0.4.0"
+                    parent_image = "123456789012.dkr.ecr.us-east-1.amazonaws.com/base/python:3.12-arm64"
+                    commands     = ["pip install boto3"]
                     # instance_type defaults to t4g.medium for ARM64
                   }
                 }
@@ -1502,7 +1502,6 @@ input_table: |
   | image_builder.commands | Bash commands executed inside the build. | `list(string)` | `[]` | no |
   | image_builder.files | Files written into the image (`{ "/path" = { content or source, mode } }`). | `map` | `{}` | no |
   | image_builder.directories | Local directories copied into the image (`{ "/dest" = "./local" }`). | `map(string)` | `{}` | no |
-  | image_builder.parent_image_repository_arns | Private ECR repository ARNs the parent image is pulled from. | `list(string)` | `[]` | no |
   | image_builder.entrypoint | Dockerfile ENTRYPOINT (exec form). | `list(string)` | `[]` | no |
   | image_builder.cmd | Dockerfile CMD (exec form). | `list(string)` | `[]` | no |
   | image_builder.dockerfile_template | Full Image Builder Dockerfile template. | `string` | `null` | no |

@@ -1132,8 +1132,7 @@ module "wrapper_ecs_service" {
             enable       = true    # Default: true
             image_tag    = "1.0.1" # A new build runs only when this value changes
             parent_image = "public.ecr.aws/docker/library/python:3.12-slim"
-            # bucket_name  = "my-ib-content" # Default: ${local.common_name}-<service>-<container>-ib-content
-            # parent_image_repository_arns = ["arn:aws:ecr:us-east-1:123456789012:repository/base/example"] # Default: []
+            # bucket_name = "my-ib-content" # Default: ${local.common_name}-<service>-<container>-ib-content
 
             # Copied first (key = destination path in the image)
             files = {

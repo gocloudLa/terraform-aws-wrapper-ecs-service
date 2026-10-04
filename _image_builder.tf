@@ -38,24 +38,22 @@ module "ecs_image_builder" {
 
   name      = "${local.common_name}-${each.key}"
   vpc_id    = data.aws_vpc.this[each.value.service_key].id
-  subnet_id = tolist(data.aws_subnets.this[each.value.service_key].ids)[0]
+  subnet_id = sort(tolist(data.aws_subnets.this[each.value.service_key].ids))[0]
 
   repository_name = module.ecr[each.key].repository_name
-  repository_arn  = module.ecr[each.key].repository_arn
   repository_url  = module.ecr[each.key].repository_url
 
-  image_tag                    = each.value.config.image_tag
-  parent_image                 = each.value.config.parent_image
-  parent_image_repository_arns = try(each.value.config.parent_image_repository_arns, [])
-  commands                     = try(each.value.config.commands, [])
-  files                        = try(each.value.config.files, {})
-  directories                  = try(each.value.config.directories, {})
-  entrypoint                   = try(each.value.config.entrypoint, [])
-  cmd                          = try(each.value.config.cmd, [])
-  dockerfile_template          = try(each.value.config.dockerfile_template, null)
-  bucket_name                  = try(each.value.config.bucket_name, lower("${local.common_name}-${each.value.service_key}-${each.value.container_key}-ib-content"))
-  instance_type                = try(each.value.config.instance_type, each.value.arm ? "t4g.medium" : "t3.medium")
-  image_tests_enabled          = try(each.value.config.image_tests_enabled, false)
+  image_tag           = try(each.value.config.image_tag, "")
+  parent_image        = try(each.value.config.parent_image, "")
+  commands            = try(each.value.config.commands, [])
+  files               = try(each.value.config.files, {})
+  directories         = try(each.value.config.directories, {})
+  entrypoint          = try(each.value.config.entrypoint, [])
+  cmd                 = try(each.value.config.cmd, [])
+  dockerfile_template = try(each.value.config.dockerfile_template, null)
+  bucket_name         = try(each.value.config.bucket_name, lower("${local.common_name}-${each.value.service_key}-${each.value.container_key}-ib-content"))
+  instance_type       = try(each.value.config.instance_type, each.value.arm ? "t4g.medium" : "t3.medium")
+  image_tests_enabled = try(each.value.config.image_tests_enabled, false)
 
   tags = merge(local.common_tags, { workload = each.value.service_key }, try(each.value.config.tags, null))
 
