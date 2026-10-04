@@ -1255,7 +1255,135 @@ features:
             }
           }
           ```
-important_notes: ""
+  - icon: 🏗️
+    title: Custom Image Build (EC2 Image Builder)
+    short_description: Build your own container image with EC2 Image Builder and run it in the service
+    long_description: |
+      Add `image_builder` to a container (instead of `image`) to build the image inside your AWS account.<br/><br/>
+
+      **What happens inside the build, in this order:**
+      1. `files` and `directories` are copied to the destination paths you choose
+      2. `commands` run one after another (a failing command stops the build)
+      3. `entrypoint` / `cmd` are written to the Dockerfile
+
+      Files go first, so your commands can already use them (chmod, sed, cat, etc).<br/><br/>
+
+      **You control when a build happens:**
+      - A new image is built **only** when `image_tag` changes (semver `x.y.z`)
+      - To release a new image, edit commands/files and bump `image_tag` in the same change
+      - Changing commands, files or parent image without bumping the tag does nothing
+      - The task definition points to `<ecr repo>:<image_tag>` and the service waits for the build
+
+      **How to copy files:**
+      - `files`: one entry per file; the key is the destination path inside the image, with `source` (local file) or `content` (inline text) and optional `mode`
+      - `directories`: copies a whole local directory, `{ "/dest/in/image" = "./local/dir" }`
+      - Everything is staged through a per-container S3 bucket, so there is no size limit
+
+      **Other options:** `parent_image_repository_arns` (private ECR parent), `instance_type` (`t3.medium`, or `t4g.medium` for ARM64), `bucket_name` (default `{common_name}-{service}-{container}-ib-content`), `image_tests_enabled`.
+    examples:
+      - title: Files, directories and commands
+        code: |
+          ```hcl
+          ecs_service_parameters = {
+            ExImageBuilder = {
+              containers = {
+                app = {
+                  image_builder = {
+                    image_tag    = "1.0.2"
+                    parent_image = "public.ecr.aws/docker/library/python:3.12-slim"
+
+                    files = {
+                      "/opt/app/app.py"              = { source = "${path.module}/image_builder_files/app.py" }
+                      "/usr/local/bin/entrypoint.sh" = { source = "${path.module}/image_builder_files/entrypoint.sh", mode = "0755" }
+                      "/etc/app/config.json"         = { content = jsonencode({ log_level = "info" }) }
+                    }
+
+                    directories = {
+                      "/opt/app/static" = "${path.module}/image_builder_files/static"
+                    }
+
+                    commands = [
+                      "apt-get update",
+                      "apt-get install -y --no-install-recommends curl ca-certificates",
+                      "pip install --no-cache-dir requests",
+                      "mkdir -p /var/log/app",
+                      "chmod -R a+rX /opt/app",
+                      "rm -rf /var/lib/apt/lists/*",
+                    ]
+
+                    entrypoint = ["/usr/local/bin/entrypoint.sh"]
+                    cmd        = ["python", "/opt/app/app.py"]
+                  }
+                  ports = {
+                    "port1" = {
+                      container_port = 8080
+                      load_balancer = {
+                        "alb1" = {
+                          alb_name                 = "dmc-lab-example-internal-00"
+                          target_group_custom_name = "dmc-lab-example-ib-8080" # Default exceeds the 32 character limit
+                          dns_records = {
+                            "ExImageBuilder" = {
+                              zone_name    = "${local.zone_public}"
+                              private_zone = false
+                            }
+                          }
+                          listener_rules = {
+                            "rule1" = {
+                              conditions = [
+                                {
+                                  host_headers = ["ExImageBuilder.${local.zone_public}"]
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+          ```
+      - title: Release a new version
+        code: |
+          ```hcl
+          # Edit the commands/files and bump the tag in the same change.
+          # Only the tag change triggers the build and the new deployment.
+          image_builder = {
+            image_tag    = "1.0.1" # was "1.0.0"
+            parent_image = "public.ecr.aws/docker/library/python:3.12-slim"
+            files        = { "/opt/app/app.py" = { source = "${path.module}/image_builder_files/app.py" } }
+            commands     = ["pip install --no-cache-dir requests"]
+          }
+          ```
+      - title: ARM64 with a private ECR parent image
+        code: |
+          ```hcl
+          ecs_service_parameters = {
+            ExImageBuilderArm = {
+              runtime_platform = {
+                operating_system_family = "LINUX"
+                cpu_architecture        = "ARM64"
+              }
+              containers = {
+                app = {
+                  image_builder = {
+                    image_tag                    = "0.4.0"
+                    parent_image                 = "123456789012.dkr.ecr.us-east-1.amazonaws.com/base/python:3.12-arm64"
+                    parent_image_repository_arns = ["arn:aws:ecr:us-east-1:123456789012:repository/base/python"]
+                    commands                     = ["pip install boto3"]
+                    # instance_type defaults to t4g.medium for ARM64
+                  }
+                }
+              }
+            }
+          }
+          ```
+important_notes: |
+  - ℹ️ **Image Builder:** `image` and `image_builder` are mutually exclusive, and `create_ecr_repository` must stay `true`. `image_tag` must be a semver (`x.y.z`); bump it to build a new image. The build instance needs outbound internet access from the service subnet, and the first apply waits for the build (about 10-20 minutes).
+  - ⚠️ **Image Builder:** changing the contents without changing `image_tag` is ignored on purpose. With an `IMMUTABLE` repository, never reuse a tag.
+
 input_table: |
   | name | ECS service instance name. | `string` | `"${local.common_name}-${each.key}"` | no |
   | alarms | Alarms associated with the ECS service (e.g., CloudWatch). | `map` | `{}` | no |
@@ -1367,6 +1495,21 @@ input_table: |
   | wait_for_steady_state | Indicates whether to wait for a steady state. | `bool` | `null` | no |
   | wait_until_stable | Indicates whether to wait until the service is stable. | `bool` | `null` | no |
   | wait_until_stable_timeout | Timeout for waiting until the service is stable. | `number` | `null` | no |
+  | image_builder | Builds the container image with EC2 Image Builder and uses it instead of `image`. | `object` | `null` | no |
+  | image_builder.image_tag | Image tag and semver version (`x.y.z`); a new build runs only when it changes. | `string` | — | yes |
+  | image_builder.parent_image | Base image of the build. | `string` | — | yes |
+  | image_builder.enable | Enables or disables the build. | `bool` | `true` | no |
+  | image_builder.commands | Bash commands executed inside the build. | `list(string)` | `[]` | no |
+  | image_builder.files | Files written into the image (`{ "/path" = { content or source, mode } }`). | `map` | `{}` | no |
+  | image_builder.directories | Local directories copied into the image (`{ "/dest" = "./local" }`). | `map(string)` | `{}` | no |
+  | image_builder.parent_image_repository_arns | Private ECR repository ARNs the parent image is pulled from. | `list(string)` | `[]` | no |
+  | image_builder.entrypoint | Dockerfile ENTRYPOINT (exec form). | `list(string)` | `[]` | no |
+  | image_builder.cmd | Dockerfile CMD (exec form). | `list(string)` | `[]` | no |
+  | image_builder.dockerfile_template | Full Image Builder Dockerfile template. | `string` | `null` | no |
+  | image_builder.bucket_name | S3 bucket that stages files copied into the image. | `string` | `"{common_name}-{service}-{container}-ib-content"` | no |
+  | image_builder.instance_type | Build instance type. | `string` | `"t3.medium"` (`"t4g.medium"` for ARM64) | no |
+  | image_builder.image_tests_enabled | Runs Image Builder tests. | `bool` | `false` | no |
+  | image_builder.tags | Extra tags for the Image Builder resources. | `map` | `{}` | no |
   | repository_name | The name of the ECR repository. | `string` | `null` | no |
   | repository_lifecycle_policy | The policy document for ECR repository lifecycle. | `string` | `null` | no |
   | repository_image_tag_mutability | The tag mutability setting for the repository. | `string` | `"MUTABLE"` | no |

@@ -61,7 +61,7 @@ locals {
           { secrets = local.app_container_definition_secrets["${service_key}-${container_key}"] },
           { portMappings = local.app_container_definition_port_mappings["${service_key}-${container_key}"] },
           { mountPoints = local.app_container_definition_mount_points_efs["${service_key}"]["${container_key}"] },
-          { image = try(module.ecr["${service_key}-${container_key}"].repository_url, container.image) },
+          { image = try(module.ecs_image_builder["${service_key}-${container_key}"].image_uri, module.ecr["${service_key}-${container_key}"].repository_url, container.image) },
           { readonlyRootFilesystem = try(container.readonlyRootFilesystem, false) },
           { user = try(container.user, null) }, # FIX, sin esto el modulo le pone user = 0 y rompen los contenedores bitnami/redis:7.0.10 y bitnami/openldap:2.6.4-debian-11-r4
           { essential = try(container.essential, true) },
