@@ -1130,7 +1130,7 @@ module "wrapper_ecs_service" {
           # Do not set `image` together with `image_builder`
           image_builder = {
             enable       = true    # Default: true
-            image_tag    = "1.0.1" # A new build runs only when this value changes
+            image_tag    = "1.0.0" # A new build runs only when this value changes
             parent_image = "public.ecr.aws/docker/library/python:3.12-slim"
             # bucket_name = "my-ib-content" # Default: ${local.common_name}-<service>-<container>-ib-content
 

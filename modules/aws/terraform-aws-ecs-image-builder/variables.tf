@@ -30,6 +30,11 @@ variable "repository_name" {
   description = "Name of the existing ECR repository that receives the image."
 }
 
+variable "repository_arn" {
+  type        = string
+  description = "ARN of the existing ECR repository that receives the image."
+}
+
 variable "repository_url" {
   type        = string
   description = "URL of the existing ECR repository that receives the image."

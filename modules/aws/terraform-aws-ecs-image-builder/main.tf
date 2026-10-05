@@ -45,7 +45,6 @@ resource "aws_iam_role" "this" {
 resource "aws_iam_role_policy_attachment" "this" {
   for_each = local.create ? toset([
     "arn:aws:iam::aws:policy/EC2InstanceProfileForImageBuilder",
-    "arn:aws:iam::aws:policy/EC2InstanceProfileForImageBuilderECRContainerBuilds",
     "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
   ]) : toset([])
 
@@ -53,7 +52,8 @@ resource "aws_iam_role_policy_attachment" "this" {
   policy_arn = each.value
 }
 
-# ECR push/pull comes from EC2InstanceProfileForImageBuilderECRContainerBuilds
+# ECR access is scoped to the target repository (instead of the broad
+# EC2InstanceProfileForImageBuilderECRContainerBuilds managed policy).
 resource "aws_iam_role_policy" "this" {
   count = local.create ? 1 : 0
 
@@ -63,16 +63,54 @@ resource "aws_iam_role_policy" "this" {
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = concat(
-      [{
+      [
+        {
+          Effect   = "Allow"
+          Action   = ["ecr:GetAuthorizationToken"]
+          Resource = "*"
+        },
+        {
+          # The build fetches its own Dockerfile template from the recipe
+          Effect   = "Allow"
+          Action   = ["imagebuilder:GetContainerRecipe"]
+          Resource = [aws_imagebuilder_container_recipe.this[0].arn]
+        },
+        {
+          Effect = "Allow"
+          Action = [
+            "ecr:BatchCheckLayerAvailability",
+            "ecr:GetDownloadUrlForLayer",
+            "ecr:BatchGetImage",
+            "ecr:InitiateLayerUpload",
+            "ecr:UploadLayerPart",
+            "ecr:CompleteLayerUpload",
+            "ecr:PutImage",
+          ]
+          Resource = [var.repository_arn]
+        },
+      ],
+      # Parent image hosted in ECR Public
+      startswith(var.parent_image, "public.ecr.aws/") ? [{
         Effect = "Allow"
         Action = [
           "ecr-public:GetAuthorizationToken",
+          "sts:GetServiceBearerToken",
           "ecr-public:BatchCheckLayerAvailability",
           "ecr-public:GetDownloadUrlForLayer",
           "ecr-public:BatchGetImage",
         ]
         Resource = "*"
-      }],
+      }] : [],
+      # Parent image hosted in a private ECR repository (pull only)
+      strcontains(var.parent_image, ".dkr.ecr.") ? [{
+        Effect = "Allow"
+        Action = [
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:BatchGetImage",
+        ]
+        Resource = "*"
+      }] : [],
       local.has_files ? [{
         Effect   = "Allow"
         Action   = ["s3:GetObject"]

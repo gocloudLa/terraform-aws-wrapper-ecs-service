@@ -41,6 +41,7 @@ module "ecs_image_builder" {
   subnet_id = sort(tolist(data.aws_subnets.this[each.value.service_key].ids))[0]
 
   repository_name = module.ecr[each.key].repository_name
+  repository_arn  = module.ecr[each.key].repository_arn
   repository_url  = module.ecr[each.key].repository_url
 
   image_tag           = try(each.value.config.image_tag, "")

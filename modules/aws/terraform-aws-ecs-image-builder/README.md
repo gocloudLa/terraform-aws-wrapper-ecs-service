@@ -19,6 +19,7 @@ Used by the wrapper when a container defines `image_builder`.
 | vpc_id | VPC ID where the build instance runs. | `string` | n/a | yes |
 | subnet_id | Subnet ID of the build instance (needs outbound internet). | `string` | n/a | yes |
 | repository_name | Existing ECR repository name. | `string` | n/a | yes |
+| repository_arn | Existing ECR repository ARN (IAM is scoped to it). | `string` | n/a | yes |
 | repository_url | Existing ECR repository URL. | `string` | n/a | yes |
 | image_tag | Image tag and version (`x.y.z`). | `string` | n/a | yes |
 | parent_image | Base image of the build. | `string` | n/a | yes |
