@@ -434,7 +434,7 @@ locals {
             {
               "${service_name}-${container_name}-${port_key}-${alb_key}-${dns_key}" = {
                 "target_group_key" = "${service_name}-${container_name}-${port_key}-${alb_key}"
-                "record_name"      = length(dns_key) > 0 ? dns_key : "${service_name}-${container_name}-${port_key}-${alb_key}"
+                "record_name"      = length(try(dns_values.record_name, dns_key)) > 0 ? try(dns_values.record_name, dns_key) == "_null_" ? "" : try(dns_values.record_name, dns_key) : "${service_name}-${container_name}-${port_key}-${alb_key}"
                 "zone_name"        = dns_values.zone_name
                 "private_zone"     = dns_values.private_zone
                 "ttl"              = lookup(dns_values, "ttl", 300)
