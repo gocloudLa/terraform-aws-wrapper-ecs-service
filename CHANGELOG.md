@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/compare/v1.5.0...v1.6.0) (2026-10-09)
+
+
+### Features
+
+* **dns:** add _null_ dns record support ([#34](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/issues/34)) ([9cac590](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/commit/9cac590047ff5057f5987eec4ed7dca47f038e35))
+
 ## [1.5.0](https://github.com/gocloudLa/terraform-aws-wrapper-ecs-service/compare/v1.4.3...v1.5.0) (2026-07-31)
 
 
